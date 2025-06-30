@@ -257,6 +257,72 @@
             display: block;
         }
 
+        /* Newsletter Section */
+        .newsletter {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 100px 0;
+            text-align: center;
+        }
+
+        .newsletter-content {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+
+        .newsletter h2 {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .newsletter p {
+            font-size: 1.2rem;
+            margin-bottom: 2rem;
+            opacity: 0.9;
+        }
+
+        .newsletter-benefits {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+            margin: 2rem 0;
+        }
+
+        .benefit {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 1rem;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-size: 0.95rem;
+        }
+
+        .newsletter-button {
+            display: inline-block;
+            padding: 18px 40px;
+            background: linear-gradient(45deg, #ff6b6b, #ee5a24);
+            color: white;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            margin: 1rem 0;
+        }
+
+        .newsletter-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.3);
+            background: linear-gradient(45deg, #ee5a24, #ff6b6b);
+        }
+
+        .newsletter-note {
+            font-size: 0.9rem;
+            opacity: 0.7;
+            margin-top: 1rem;
+        }
+
         footer {
             background: #2c3e50;
             color: white;
@@ -461,6 +527,25 @@
             </div>
             <div style="margin-top: 3rem; text-align: center;">
                 <p style="font-size: 1.2rem; opacity: 0.9;">Tested across enterprise environments with millions of requests per day</p>
+            </div>
+        </div>
+    </section>
+
+    <section class="newsletter">
+        <div class="container">
+            <div class="newsletter-content animate-on-scroll">
+                <h2>Stay Updated with EdgeCDN-X</h2>
+                <p>Get the latest updates, deployment guides, and performance optimization tips delivered directly to your inbox.</p>
+                <div class="newsletter-benefits">
+                    <div class="benefit">📚 Technical guides and tutorials</div>
+                    <div class="benefit">🚀 New feature announcements</div>
+                    <div class="benefit">💡 Best practices and case studies</div>
+                    <div class="benefit">🔧 Deployment tips and tricks</div>
+                </div>
+                <a href="https://mailing.edgecdnx.com/subscription/form" class="newsletter-button" target="_blank">
+                    Subscribe to Newsletter
+                </a>
+                <p class="newsletter-note">No spam, unsubscribe anytime. We respect your privacy.</p>
             </div>
         </div>
     </section>
