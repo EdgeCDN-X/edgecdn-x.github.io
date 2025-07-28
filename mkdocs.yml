@@ -2,3 +2,5 @@ site_name: EdgeCDN-X
 site_url: https://edgecdn-x.github.io
 theme:
   name: material
+markdown_extensions:
+  - attr_list
