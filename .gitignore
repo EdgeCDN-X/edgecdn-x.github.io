@@ -108,3 +108,5 @@ cython_debug/
 venv
 .venv
 .envrc
+
+site/
