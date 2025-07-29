@@ -4,3 +4,19 @@ theme:
   name: material
 markdown_extensions:
   - attr_list
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.snippets
+  - pymdownx.superfences
+nav:
+  - "Overview": index.md
+  - "Architecture": architecture.md
+  - "Deployment":
+      - "Control Plane": 
+          - "ArgoCD": control-plane.md
+          - "Registering Locations": locations.md
+      - "Routing": routing.md
+      - "Caching": caching.md
