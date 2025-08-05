@@ -1,3 +1,9 @@
+---
+tags:
+  - crds
+  - coredns
+  - routing
+---
 # CoreDNS
 CoreDNS is used as a routing engine of the EdgeCDN-X Platform. The DNS resolves to IP address based on the user's location. CoreDNS is extended with several custom plugins for enhanced functionality.
 

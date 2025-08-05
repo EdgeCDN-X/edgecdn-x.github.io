@@ -2,6 +2,8 @@ site_name: EdgeCDN-X
 site_url: https://edgecdn-x.github.io
 theme:
   name: material
+plugins:
+  - tags
 markdown_extensions:
   - attr_list
   - pymdownx.highlight:
@@ -23,3 +25,4 @@ nav:
           - "CoreDNS": coredns.md
           - "CoreDNS Deployment": coredns-deployment.md
       - "Caching": caching.md
+  - "Tags": tags.md

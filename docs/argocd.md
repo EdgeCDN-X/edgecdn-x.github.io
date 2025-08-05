@@ -1,3 +1,7 @@
+---
+tags:
+  - argocd
+---
 # Control Plane
 The control plane is central component where the rollout logic is happening. EdgeCDN-X Platform relies on ArgoCD to effectively distribute the resources to the desired locations.
 

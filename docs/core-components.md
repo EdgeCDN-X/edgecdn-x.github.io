@@ -1,3 +1,11 @@
+---
+tags:
+  - routing
+  - caching
+  - secure-urls
+  - consul
+  - ingress-nginx
+---
 # Core Components
 Once we have the locations registered and annotated with the correct annotations we can start deploying the control plane components across the whole ecosystem.
 
