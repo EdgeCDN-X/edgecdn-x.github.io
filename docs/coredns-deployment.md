@@ -3,6 +3,7 @@ We will use an ArogCD Cluster generator to deploy the CoreDNS components on each
 
 ## Required variables
 For each region define the following variables:
+
 * edgecdnx.com/namepsace: Defines the working namespace for reading CRDs
 * edgecdnx.com/public-ip: Defines the Public IP of the DNS endpoint
 * edgecdnx.com/ns: Identifies the NS id. e.g. "1", turns to ns1, "2" to ns2
@@ -29,15 +30,18 @@ metadata:
 ## Applicationset Manifest
 
 ### Prerequisites
-* CRDs Installed
+
+ * CRDs Installed
 
 ### Components
+
 * CoreDNS
 * Module Configuration
 * Geolookup MMDB-Lite DB
 * CoreDNS RBAC - to be able to read CRDs.
 
 ### CoreDNS Required modules
+
 * Metadata
 * GeoIP
 * Ready

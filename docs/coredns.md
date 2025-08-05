@@ -3,6 +3,7 @@ CoreDNS is used as a routing engine of the EdgeCDN-X Platform. The DNS resolves 
 
 ## Routing
 Routing component routes the individual requests via the following steps:
+
 * Prefix static routing to individual location (sourced from static prefix list)
 * GeoLookup to locations if static routing returns no destination
 * Consistent hashing in location to maximize cache-hit ratio
@@ -17,6 +18,7 @@ Routing engine is rolled out to each location with **edgecdnx.com/routing** labe
 [edgecdnx-prefixlist](https://github.com/EdgeCDN-X/edgecdnx-prefixlist) CoreDNS module gathers all the prefixes for the individual locations. These prefixes must be normalized and must be non overlapping. There's a helper [operator](https://github.com/EdgeCDN-X/edgecdnx-controller) which helps to achieve Prefix Consolidation and Supernet subnetting, to make sure there are no overlaps in the Prefixes. The Module is using CoreDNS's Metadata interface to find the desired destination for a given prefix. 
 
 **Features**:
+
 * Routing to location based on Client IP address 
 * Prefixes are stored in a fast balanced AVL Tree to ensure speedy lookups
 * EDNS0 Subnet extension support
