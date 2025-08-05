@@ -19,5 +19,7 @@ nav:
           - "ArgoCD": argocd.md
           - "Registering Locations": locations.md
           - "Core Components": core-components.md
-      - "Routing": routing.md
+      - "Routing":
+          - "CoreDNS": coredns.md
+          - "CoreDNS Deployment": coredns-deployment.md
       - "Caching": caching.md

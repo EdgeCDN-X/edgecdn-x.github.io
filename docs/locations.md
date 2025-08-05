@@ -120,6 +120,9 @@ For **Routing** clusters create a secret with these parameters:
             annotations:
               edgecdnx.com/public-ip: "{{ public_ip }}"
               edgecdnx.com/ns: "{{ ns }}"
+              edgecdnx.com/namespace: "{{ namespace }}"
+              edgecdnx.com/basedomain: "{{ basedomain }}"
+              edgecdnx.com/domainemail: "{{ domainemail }}"
           type: Opaque
           stringData:
             name: "{{ inventory_hostname }}"

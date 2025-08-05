@@ -3,7 +3,7 @@ Once we have the locations registered and annotated with the correct annotations
 
 The image below represents the core components deployed. All these components are deployed with ArgoCD using Cluster Generators.
 
-![deployment-control](assets/deployment-control.png)
+![deployment-control](assets/deployment-control-2.png)
 
 ## Control Plane
 #### EdgeCDN-X-Controller - Control
