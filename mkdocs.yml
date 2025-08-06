@@ -24,5 +24,6 @@ nav:
       - "Routing":
           - "CoreDNS": coredns.md
           - "CoreDNS Deployment": coredns-deployment.md
+          - "Consul Deployment": consul-deployment.md
       - "Caching": caching.md
   - "Tags": tags.md
