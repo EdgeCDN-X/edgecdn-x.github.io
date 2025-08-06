@@ -16,6 +16,7 @@ markdown_extensions:
 nav:
   - "Overview": index.md
   - "Architecture": architecture.md
+  - "CRDs": crds.md
   - "Deployment":
       - "Control Plane": 
           - "ArgoCD": argocd.md
