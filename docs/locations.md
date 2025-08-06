@@ -195,10 +195,16 @@ edgecdnx-routing:
       location: eu-east-1
       ns: "1"
       public_ip: "11.12.13.14"
+      namespace: edgecdnx
+      basedomain: cdn.edgecdnx.com.
+      domainemail: noc.edgecdnx.com
     us-east-1.k8s.edgecdnx.com:
       location: us-east-1
       ns: "2"
       public_ip: "150.151.152.153"
+      namespace: edgecdnx
+      basedomain: cdn.edgecdnx.com.
+      domainemail: noc.edgecdnx.com
 edgecdnx-cache:
   hosts:
     eu-west-1.k8s.edgecdnx.com:
