@@ -1,3 +1,8 @@
+---
+tags:
+  - coredns
+  - routing
+---
 # CoreDNS Deployment
 We will use an ArogCD Cluster generator to deploy the CoreDNS components on each region marked with **routing** tag.
 
@@ -103,7 +108,7 @@ spec:
             valuesObject:
               image:
                 repository: fr6nco/coredns
-                tag: latest
+                tag: 1.12.1-ex-1
                 pullPolicy: Always
               serviceType: LoadBalancer
               service:
