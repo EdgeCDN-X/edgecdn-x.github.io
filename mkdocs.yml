@@ -22,9 +22,16 @@ nav:
           - "ArgoCD": argocd.md
           - "Registering Locations": locations.md
           - "Core Components": core-components.md
+          - "EdgeCDN-X Controller": edgecdnx-controller.md
       - "Routing":
           - "CoreDNS": coredns.md
           - "CoreDNS Deployment": coredns-deployment.md
           - "Consul Deployment": consul-deployment.md
-      - "Caching": caching.md
+          - "EdgeCDN-X Controller - Routing": edgecdnx-controller-router.md
+      - "Caching":
+          - "Prerequiseites": cache-prerequisites.md
+          - "Ingress NGINX": ingress-nginx.md
+          - "Ingress NGINX Deployment": nginx-deployment.md
+          - "EdgeCDN-X Controller - Caching": edgecdnx-controller-cache.md
+          - "Secure Urls": secure-urls.md
   - "Tags": tags.md

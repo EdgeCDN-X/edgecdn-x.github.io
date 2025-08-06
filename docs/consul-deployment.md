@@ -103,7 +103,7 @@ spec:
 This manifest will deploy `consul` and `consul-esm` on clusters, where **edgedcnx.com/routing** is present in the labels. It is deployed in namespace **edgecdnx-routing** using the storageClass local-path. Feel free to adjust the settings based on your needs.
 
 -------
-Once deployed configure your CoreDNS instance to use Consul as a [source of truth](coredns.md#GeoLookup-routing) for healthchecks. E.g.:
+Once deployed configure your CoreDNS instance to use Consul as a [source of truth](coredns.md#geolookup-routing) for healthchecks. E.g.:
 
 ```
         edgecdnxgeolookup {
