@@ -31,9 +31,9 @@ nav:
       - "Caching":
           - "Prerequisites": cache-prerequisites.md
           - "Ingress NGINX": ingress-nginx.md
-          - "Ingress NGINX Deployment": nginx-deployment.md
           - "EdgeCDN-X Controller - Caching": edgecdnx-controller-cache.md
           - "Secure Urls": secure-urls.md
   - "S3 Gateway": s3-gateway.md
   - "URL Signing": url-signing.md
   - "Tags": tags.md
+  - "Contact": contact.md
