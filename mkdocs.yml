@@ -2,6 +2,8 @@ site_name: EdgeCDN-X
 site_url: https://edgecdn-x.github.io
 theme:
   name: material
+  features:
+    - content.tabs.link
 plugins:
   - tags
 markdown_extensions:
@@ -13,6 +15,8 @@ markdown_extensions:
   - pymdownx.inlinehilite
   - pymdownx.snippets
   - pymdownx.superfences
+  - pymdownx.tabbed:
+      alternate_style: true
 nav:
   - "Overview": index.md
   - "Architecture": architecture.md
@@ -33,7 +37,8 @@ nav:
           - "Ingress NGINX": ingress-nginx.md
           - "EdgeCDN-X Controller - Caching": edgecdnx-controller-cache.md
           - "Secure Urls": secure-urls.md
-  - "S3 Gateway": s3-gateway.md
-  - "URL Signing": url-signing.md
+          - "S3 Gateway": s3-gateway.md
+  - "User Guide":
+    - "URL Signing": url-signing.md
   - "Tags": tags.md
   - "Contact": contact.md
