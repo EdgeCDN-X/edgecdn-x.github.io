@@ -4,6 +4,7 @@ The EdgeCDN-X Platform enables private content to be served to client via URL Si
 
 ## Signed URLs for single object
 The object must be signed with a valid URL. The URL signate consists of the following headers:
+
 * `EX-Expires` - Expires timestamp. Till when the URL is valid
 * `EX-KeyName` - Name of the key to used to sign this request
 * `EX-Sign` - Signature
