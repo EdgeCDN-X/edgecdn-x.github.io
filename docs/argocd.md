@@ -3,11 +3,11 @@ tags:
   - argocd
 ---
 # Control Plane
-The control plane is central component where the rollout logic is happening. EdgeCDN-X Platform relies on ArgoCD to effectively distribute the resources to the desired locations.
+The control plane is central component where the rollout logic is happening. EdgeCDN-X Platform relies on ArgoCD to effectively distribute the resources to the desired locations. Using ArgoCD is not a necessity, but highly recommended as the ecosystem is built around ArgoCD Applicationsets to distrubte the configs and resources accross the regions.
 
 # Prerequisites
 * Cert-manager - for certificate creation.
-* Domain name - Pointing to ArgoCD endpoint
+* Domain name - Pointing to ArgoCD endpoint - Or External-DNS configured.
 
 ## ArgoCD Deployment
 ArgoCD is deployed via Helm. As of writing these docs, the latest helm release for ArgoCD is **8.0.13** from repository **https://argoproj.github.io/argo-helm**.

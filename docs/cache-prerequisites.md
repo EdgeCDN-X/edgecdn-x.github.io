@@ -21,4 +21,6 @@ We wan't to lower the overhead as much as possible. No thorough performance test
 
 * If possible use HostNetworking
 * Consider CNI with eBPF support (e.g. Cilium)
+* Consider High performance networking with NIC with SR-IOV injected to the NGINX prod with Multus CNI.
 * If possible, assign Public IPs directly to the hosts.
+* Alternatively, place an LB in front of the machines to improve HA. This will likely reduce Cache HIT ratio if hashing on the LB is not available.

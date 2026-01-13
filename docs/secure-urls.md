@@ -21,7 +21,7 @@ Secure URLs is deployed alongside the Routing Nodes. Use the following Applicati
 apiVersion: argoproj.io/v1alpha1
 kind: ApplicationSet
 metadata:
-  name: secure-urls
+  name: edgecdnx-secure-url
   namespace: argocd
 spec:
   goTemplate: true
@@ -41,13 +41,9 @@ spec:
               values:
                 - "true"
                 - "yes"
-            - key: edgecdnx.com/tier
-              operator: In
-              values:
-                - edge
   template:
     metadata:
-      name: secure-urls-{{ index .metadata.labels "edgecdnx.com/location" }}
+      name: secure-urls-{{ .name }}
     spec:
       project: default
       sources:
@@ -72,6 +68,7 @@ spec:
           - CreateNamespace=true
           - ServerSideApply=true # Big CRDs.
       ignoreDifferences: []
+
 ```
 
 This will deploy the helm chart `secure-urls` from the repository `https://edgecdn-x.github.io/helm-charts` to each cluster marked with **edgecdnx.com/caching** label set to **true/yes**

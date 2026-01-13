@@ -16,8 +16,7 @@ Routing component routes the individual requests via the following steps:
 * Active healthchecks to make sure destinations are healthy and available
 * Fallback routing to different location if location has no active nodes
 
-
-Routing engine is rolled out to each location with **edgecdnx.com/routing** label in the cluster [metadata](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Cluster/)
+Roll out this engine to each location where **edgecdnx.com/routing** label is set in [metadata](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Cluster/)
 
 
 ### Static Prefix routing
@@ -67,34 +66,43 @@ Geolookup configurations are coming from CRDs with an example configuration show
 apiVersion: infrastructure.edgecdnx.com/v1alpha1
 kind: Location
 metadata:
-  name: eu-west-1
+  annotations:
+  name: nyc1-c1
 spec:
   fallbackLocations:
-  - us-west-1
-  nodes:
-  - name: n1
-    ipv4: 192.168.100.35
-    caches:
-    - ssd
+  - fra1-c1
   geoLookup:
-    weight: 50
     attributes:
       geoip/continent/code:
-        weight: 1000
         values:
-          - value: "EU"
-            weight: 10
-          - value: "AF"
+        - value: AN
+        - value: NA
+        - value: OC
+        - value: SA
+        - value: AS
+        weight: 1000
+    weight: 50
+  nodeGroups:
+  - cacheConfig:
+      inactive: 10080m
+      keysZone: 100m
+      maxSize: 4096m
+      name: ssd
+      path: /var/cache/ssd
+    name: ssd
+    nodeSelector:
+      kubernetes.civo.com/civo-node-pool: nyc1-c1
+    nodes:
+    - ipv4: 74.220.30.216
+      name: n1
 ```
 
-The nodes for the specific location have to be defined here. These nodes are automatically healthchecked and evaluated when routing decisions are made. Consul is used to store the endpoints and performing the healthchecks, thus the consul endpoint has to be configured.
+The nodes for the specific location have to be defined here. These nodes are automatically healthchecked and evaluated when routing decisions are made. Nodes can be groupped into nodeGroups. Each Node Group can have a different cache configuration. This is used if we have services with varying profiles, where different caching performance is required. This cache selector is configurable in the service definition.
 
 These CRDs are consumed by the module in CoreDNS. The module has to be configured accordingly:
 ```
         edgecdnxgeolookup {
             namespace ${namespace}
-            consulEndpoint ${consul-endpoint}
-            consulcachettl 5s
             recordttl 30
         }
 ```
@@ -102,75 +110,97 @@ These CRDs are consumed by the module in CoreDNS. The module has to be configure
 
 ### Service catalog
 [edgecdnx-services](https://github.com/EdgeCDN-X/edgecdnx-services). This module is responsible for building the SOA and NS records and also enriches metadata with customer specific information for better routing decitions down the line. All thes services are auto loaded via the k8s client, so it is not required to reload the Configuration when a new service is configured.
-This module enriches the metadata in the DNS lookup chain and passes down the service specs to the routing decision.
 
-Example CRDs:
+#### Zone Configuration
+It is possible to define customer specific Zones, if the customer wishes to bring their own domain. With a CRD it is possible to configure the necessary SOA and NS records. Once the zone is configured, it's the customer's responsibility to configure the corresponding NS records on the parent DNS server.
+
+Example Zone CRD:
+```yaml
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: Zone
+metadata:
+  name: cdn.tbotech.sk
+spec:
+  email: noc.cdn.tbotech.sk
+  zone: cdn.tbotech.sk
+```
+
+This CRD will create SOA and NS records for cdn.tbotech.sk
+
+#### Service Configuration
+
+If a service is configured, CoreDNS will load the service and respont do A and AAAA requests for the given domain.
+
+Example Service:
 ```yaml
 ---
 apiVersion: infrastructure.edgecdnx.com/v1alpha1
 kind: Service
 metadata:
-  name: akldjgsofheiwu.cdn.edgecdnx.com
+  name: ytdemo.democdn.edgecdnx.com
 spec:
-  name: akldjgsofheiwu.cdn.edgecdnx.com
-  domain: akldjgsofheiwu.cdn.edgecdnx.com
-  originType: static
+  cache: ssd
   cacheKey:
     queryParams:
-      - "v"
-      - "ver"
-      - "version"
-  staticOrigins:
-    - upstream: tbotech.sk
-      hostHeader: tbotech.sk
-      port: 443
-      scheme: Https
+    - v
+    - ver
+    - version
   certificate: {}
   customer:
-    id: 2
-    name: TboTech
-  cache: ssd
+    id: 1
+    name: tbotech
+  domain: ytdemo.democdn.edgecdnx.com
+  hostAliases:
+  - name: cdn.tbotech.sk
+  name: ytdemo.democdn.edgecdnx.com
+  originType: static
+  staticOrigins:
+  - hostHeader: tbotech.sk
+    port: 443
+    scheme: Https
+    upstream: tbotech.sk
+  waf:
+    enabled: true
 ```
 
-Example configuration:
-```
-        edgecdnxservices {
-            namespace ${namespace}
-            soa ${current ns - e.g. ns1}
-            email ${soa email}
-            ns ns1 ${ NS IP1 }
-            ns ns2 ${ NS IP2 }
-        }
-```
+This resource will configure CoreDNS to respond to `ytdemo.democdn.edgecdnx.com` and `cdn.tbotech.sk` domains. Zone configuration for both domains have to be present too.
 
 
 # Full configuration
-```
+Since few of these services are dependent on each other, here is an example full config with all the required dependencies:
 
-    cdn.edgecdnx.com.:53 {
-        ready
-        debug
-        metadata
-        health {
-            lameduck 5s
-        }
-        edgecdnxprefixlist edgecdnx
-        geoip /etc/edgecdnx/geolookup/GeoLite2-City.mmdb {
-            edns-subnet
-        }
-        edgecdnxgeolookup {
-            namespace edgecdnx
-            consulEndpoint http://edgecdnx-consul-consul-server:8500
-            consulcachettl 5s
-            recordttl 30
-        }
-        edgecdnxservices {
-            namespace edgecdnx
-            soa ns1
-            email noc.edgecdnx.com
-            ns ns1 188.167.203.183
-            ns ns2 189.167.203.182
-        }
+
+```yaml
+.:53 {
+    ready
+    debug
+    metadata
+    log . "{combined}"
+    errors {
+        stacktrace
     }
-
+    health {
+        lameduck 5s
+    }
+    edgecdnxprefixlist edgecdnx
+    geoip /etc/edgecdnx/geolookup/GeoLite2-City.mmdb {
+        edns-subnet
+    }
+    edgecdnxgeolookup {
+        namespace edgecdnx
+        recordttl 30
+    }
+    edgecdnxservices {
+        namespace edgecdnx
+        soa ns1
+        ns ns1 74.220.25.73
+        ns ns2 54.44.35.25
+    }
+}
 ```
+
+If multiple DNS servers are present, the NS configuration whould be available for each server in the edgecdnxservice modules. 
+
+# Source code
+
+The full fork with these modules is available at [CoreDNS](https://github.com/EdgeCDN-X/coredns). Images are published at [Docker HUb](https://hub.docker.com/repository/docker/fr6nco/coredns/tags)

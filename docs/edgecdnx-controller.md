@@ -12,11 +12,13 @@ Additonal roles such ash `cache-controller` and `router` alter the behaviour of 
 
 
 ## CRDs
-There are 3 CRDs in the system:
+There are 5 CRDs in the system:
 
 * Location
 * Service
 * PrefixList
+* Project
+* Zone
 
 Locations define the infrastructure. Services define the services served across the plaftom, and PrefixLists can alter the routing in the ecosystem. For details click [here](crds.md)
 
@@ -26,6 +28,7 @@ In `controller` mode the controller listens for any changes to these CRDs. If a 
 * Location - these are distributed to routing locations. Clusters set with **edgecdnx.com/routing** annotation for CoreDNS
 * PrefixList - these are distributed to routing locations. Clusters set with **edgecdnx.com/routing** annotation for CoreDNS
 * Service - these are distributed to both routing and caching locations. Clusters set with **edgecdnx.com/routing** or **edgecdnx.com/caching** annotation. Both CoreDNS and Nginx are working with these types.
+* Zone - Distributed to routing locations with **edgecdnx.com/routing** annotation set. It is used for CoreDNS to load Zone Files.
 
 ## Route consolidation
 To ensure that there are no overlapping IPv4 or IPv6 addresses in the PrefixLists, the EdgeCDN-X Controller consolidates and merges subnets into supernets to make the routing table smaller.
@@ -51,6 +54,7 @@ dependencies:
 And values files:
 ```yaml
 edgecdnx-controller:
+  role: {{ .Values.Role }}         # (controller, router, cache-controller)
   targetNamespace: "edgecdnx"
 ```
 

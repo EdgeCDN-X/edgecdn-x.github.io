@@ -4,24 +4,20 @@ tags:
   - routing
 ---
 # CoreDNS Deployment
-We will use an ArogCD Cluster generator to deploy the CoreDNS components on each region marked with **routing** tag.
+We will use an ArogCD Cluster generator to deploy the CoreDNS components on each region marked with **edgecdnx.com/routing** tag.
 
 ## Required variables
 For each region define the following variables:
 
-* edgecdnx.com/namepsace: Defines the working namespace for reading CRDs
+* edgecdnx.com/namespace: Defines the working namespace for reading CRDs
 * edgecdnx.com/public-ip: Defines the Public IP of the DNS endpoint
 * edgecdnx.com/ns: Identifies the NS id. e.g. "1", turns to ns1, "2" to ns2
-* edgecdnx.com/basedomain: Basedomain to serve. e.g. "cdn.edgecdnx.com." - note the dot at the end
-* edgecdnx.com/domainemail: Email address listed in SOA. e.g. "noc.edgecdnx.com"
 
 Example:
 ```yaml
 kind: Secret
 metadata:
   annotations:
-    edgecdnx.com/basedomain: cdn.edgecdnx.com.
-    edgecdnx.com/domainemail: noc.edgecdnx.com
     edgecdnx.com/namespace: edgecdnx
     edgecdnx.com/ns: "1"
     edgecdnx.com/public-ip: 188.167.203.182
@@ -83,7 +79,7 @@ spec:
           - clusters:
               values:
                 chart: coredns
-                chartVersion: 1.43.0
+                chartVersion: 1.43.3
                 chartRepository: https://coredns.github.io/helm
                 namespace: edgecdnx-routing
               selector:
@@ -95,7 +91,7 @@ spec:
                       - "yes"
   template:
     metadata:
-      name: edgecdnx-coredns-{{ index .metadata.labels "edgecdnx.com/location" }}
+      name: edgecdnx-coredns-{{ .name }}
     spec:
       project: default
       sources:
@@ -108,19 +104,27 @@ spec:
             valuesObject:
               image:
                 repository: fr6nco/coredns
-                tag: 1.12.1-ex-1
+                tag: 1.12.1-ex-8
                 pullPolicy: Always
               serviceType: LoadBalancer
               service:
                 externalTrafficPolicy: Local
+                annotations:
+                  kubernetes.civo.com/loadbalancer-enable-proxy-protocol: send-proxy-v2
               isClusterService: false
-              replicaCount: 1
+              replicaCount: 2
               servers:
                 - port: 53
+                  nodePort: 30053
                   plugins:
                     - name: ready
                     - name: debug
                     - name: metadata
+                    - name: log
+                      parameters: . "{combined}"
+                    - name: errors
+                      configBlock: |-
+                        stacktrace
                     - name: health
                       configBlock: |-
                         lameduck 5s
@@ -128,24 +132,21 @@ spec:
                       parameters: '{{ index .metadata.annotations "edgecdnx.com/namespace" }}'
                     - name: geoip
                       parameters: /etc/edgecdnx/geolookup/GeoLite2-City.mmdb
-                      configBlock: |
+                      configBlock: |-
                         edns-subnet
                     - name: edgecdnxgeolookup
-                      configBlock: |
+                      configBlock: |-
                         namespace {{ index .metadata.annotations "edgecdnx.com/namespace" }}
-                        consulEndpoint http://edgecdnx-consul-consul-server:8500
-                        consulcachettl 5s
                         recordttl 30
                     - name: edgecdnxservices
-                      configBlock: |
+                      configBlock: |-
                         namespace {{ index .metadata.annotations "edgecdnx.com/namespace" }}
                         soa {{- range .clusters -}}{{ if eq .name $.name }} ns{{ index .metadata.annotations "edgecdnx.com/ns" }}{{ end -}}{{- end }}
-                        email {{ index .metadata.annotations "edgecdnx.com/domainemail" }}
                         {{- range .clusters }}
                         ns ns{{ index .metadata.annotations "edgecdnx.com/ns" }} {{ index .metadata.annotations "edgecdnx.com/public-ip" }}
                         {{- end }}
-                  zones:  
-                    - zone: '{{ index .metadata.annotations "edgecdnx.com/basedomain" }}'
+                  zones:
+                    - zone: '.'
               initContainers:
                 - name: edgecdnx-mmdb-init
                   image: curlimages/curl:8.14.1
@@ -165,7 +166,7 @@ spec:
                   mountPath: /etc/edgecdnx/geolookup
         - chart: coredns-rbac
           repoURL: https://edgecdn-x.github.io/helm-charts
-          targetRevision: 0.1.1
+          targetRevision: 0.1.4
           helm:
             releaseName: edgecdnx-coredns-rbac
             ignoreMissingValueFiles: true
@@ -176,10 +177,9 @@ spec:
         server: "{{ .server }}"
       syncPolicy:
         automated:
-          selfHeal: true
+          selfHeal: false
         syncOptions:
           - CreateNamespace=true
           - ServerSideApply=true # Big CRDs.
       ignoreDifferences: []
-
 ```

@@ -115,14 +115,11 @@ For **Routing** clusters create a secret with these parameters:
             namespace: argocd
             labels:
               argocd.argoproj.io/secret-type: cluster
-              edgecdnx.com/location: "{{ location }}"
               edgecdnx.com/routing: "true"
             annotations:
-              edgecdnx.com/public-ip: "{{ public_ip }}"
-              edgecdnx.com/ns: "{{ ns }}"
-              edgecdnx.com/namespace: "{{ namespace }}"
-              edgecdnx.com/basedomain: "{{ basedomain }}"
-              edgecdnx.com/domainemail: "{{ domainemail }}"
+              edgecdnx.com/namespace: edgecdnx
+              edgecdnx.com/ns: "1"
+              edgecdnx.com/public-ip: 74.220.25.73
           type: Opaque
           stringData:
             name: "{{ inventory_hostname }}"
@@ -141,6 +138,8 @@ For **Routing** clusters create a secret with these parameters:
 
 * edgecdnx.com/public-ip - Sets the public IP of the DNS endpoint 
 * edgecdnx.com/ns - ns id for the location. E.g. for "1" it becomes ns1.
+* edgecdnx.com/namespace - Namespace where resources are watched by CoreDNS
+
 
 ### Caching Cluter
 For **Caching** clusters create a secet with these parameters:
@@ -197,14 +196,12 @@ edgecdnx-routing:
       public_ip: "11.12.13.14"
       namespace: edgecdnx
       basedomain: cdn.edgecdnx.com.
-      domainemail: noc.edgecdnx.com
     us-east-1.k8s.edgecdnx.com:
       location: us-east-1
       ns: "2"
       public_ip: "150.151.152.153"
       namespace: edgecdnx
       basedomain: cdn.edgecdnx.com.
-      domainemail: noc.edgecdnx.com
 edgecdnx-cache:
   hosts:
     eu-west-1.k8s.edgecdnx.com:
