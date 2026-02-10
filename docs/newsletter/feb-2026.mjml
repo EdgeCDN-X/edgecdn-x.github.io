@@ -1,0 +1,100 @@
+<mjml>
+    <mj-head>
+        <mj-attributes>
+            <mj-all font-family="Arial, Helvetica, sans-serif" />
+            <mj-text color="#353333" font-size="16px" />
+            <mj-button background-color="#3472ed" color="#ffffff" />
+        </mj-attributes>
+    </mj-head>
+
+    <mj-body background-color="#f4f6fb">
+
+        <!-- Header -->
+        <mj-section background-color="#3472ed" padding="30px">
+            <mj-column>
+                <mj-image
+                    src="https://edgecdnx.fra1.digitaloceanspaces.com/assets/public/Logo%20Transparency%20white.png"
+                    alt="Logo" width="250px" align="center" />
+            </mj-column>
+        </mj-section>
+
+        <!-- Main Content -->
+        <mj-section background-color="#ffffff" padding="30px">
+            <mj-column>
+                <mj-text font-size="18px" color="#353333" line-height="1.6">
+
+                    <section style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                        <h2 style="color: #1E90FF;">February updates - EdgeCDN-X</h2>
+                        <h4 style="color: #1E90FF;">Bring your own domain</h4>
+                        <p>You can now use your own domain on the EdgeCDN-X platform. It is possible to delegate a subzone to the DNS infrastructure and register it as a hostAlias with the service, e.g. cdn.yourservice.com. With this you can hide the underlying infrastructure's details.</p>
+                        <h4 style="color: #1E90FF">CoreDNS Plugin refactor</h4>
+                      <p>The coreDNS plugin is now completely refactored and no longer requires 3 different plugins to achieve the same functionality. The plugin source code is present at <a href="https://github.com/EdgeCDN-X/edgecdnx-plugin" target="_blank">https://github.com/EdgeCDN-X/edgecdnx-plugin</a></p>
+
+                        <h4 style="color: #1E90FF;">UI is coming:</h4>
+                        <p>Development of the user Interface is in progress. This UI will present a frontend for both platform administrators and clients with multi-tenant capapbilities:</p>
+                        <p>With a new UI the platform will get closer to building an affordable CDN. The platform likely will be launched in Europe first in the upcoming months.</p>
+                    </section>
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <!-- Video Links -->
+        <mj-section background-color="#ffffff" padding="30px">
+            <mj-column width="100%">
+              <mj-text font-size="18px" color="#353333" line-height="1.6">
+                <section style="font-family: Arial, sans-serif; line-height: 1.1; color: #333;">
+                  <h4 style="color: #1E90FF;">Latest videos on the YT channel</h4>
+                </section>
+              </mj-text>
+              
+              <mj-image src="https://i9.ytimg.com/vi/mPyjJkKmqTI/maxresdefault.jpg?v=6968c4f0&sqp=CJDnq8wG&rs=AOn4CLCXGElla_hWVE2H_CbPAvbbSMw3tw"
+                    alt="EdgeCDN-X Introduction Video" href="https://www.youtube.com/watch?v=mPyjJkKmqTI" />
+                <mj-text align="center" color="#3472ed">
+                    <a href="https://www.youtube.com/watch?v=mPyjJkKmqTI" style="color:#3472ed;text-decoration:none;">
+                        Host Aliases Support
+                    </a>
+                </mj-text>
+              
+
+              <mj-image src="https://i9.ytimg.com/vi/xceDs9y5LWI/maxresdefault.jpg?v=697b4ad7&sqp=CJDnq8wG&rs=AOn4CLDtYq4I7TnUVkRxrKVCE4tioILfHA"
+                    alt="EdgeCDN-X Introduction Video" href="https://www.youtube.com/watch?v=xceDs9y5LWI" />
+                <mj-text align="center" color="#3472ed">
+                    <a href="https://www.youtube.com/watch?v=xceDs9y5LWI" style="color:#3472ed;text-decoration:none;">
+                        SR-IOV on Kubernetes
+                    </a>
+                </mj-text>
+              
+            </mj-column>
+
+            <mj-column width="100%">
+                <mj-text>
+                    Eager to find out more? Feel free to contact us or follow us on one of the socials found in the footer.
+                </mj-text>
+                <mj-button href="https://n8n.tbotech.sk/form/5e66f7f3-f59e-4973-aa75-26a343a9b0ba" background-color="#3472ed" color="white" border-radius="5px" padding="15px 30px">
+                    Contact Me
+                </mj-button>
+            </mj-column>
+
+          
+          
+
+
+        </mj-section>
+
+        <!-- Footer -->
+        <mj-section background-color="#353333" padding="20px">
+            <mj-column>
+                <mj-social mode="horizontal" icon-size="24px" align="center">
+                    <mj-social-element name="youtube" href="https://www.youtube.com/@edgecdnx" background-color="#01b1ff" />
+                    <mj-social-element name="x" href="https://x.com/EdgecdnX" background-color="#01b1ff" />
+                    <mj-social-element name="github" href="https://github.com/EdgeCDN-X" background-color="#01b1ff" />
+                </mj-social>
+
+                <mj-text align="center" font-size="12px" color="#ffffff">
+                    2026 TboTech s.r.o. - EdgeCDN-X<br></br>Slovakia
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+    </mj-body>
+</mjml>
