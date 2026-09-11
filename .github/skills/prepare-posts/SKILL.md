@@ -17,6 +17,7 @@ Use this skill to create high-quality social media posts for product launches, f
 - Posts include engagement hooks (questions, calls-to-action)
 - Posts stored in organized folder structure: `docs/posts/YEAR/week-XX/`
 - Metadata (title, date, tags) included for blogging/scheduling systems
+- Each post includes a **Social Media Copy** section with separate, ready-to-paste blocks for **LinkedIn** and **X** (Twitter)
 - Optional: Emoji-free or platform-specific formatting applied
 
 ## Procedure
@@ -99,13 +100,39 @@ tags:
   - Use dashes (`-`) or numbers for lists
   - Hyperlink relevant docs or resources inline
 
-### 5. Organize and Store
+### 5. Generate Platform Copy-Paste Blocks
+
+At the end of every post file, add a `## Social Media Copy` section with two fenced code blocks so the content can be copied directly:
+
+```markdown
+## Social Media Copy
+
+### LinkedIn
+
+\`\`\`text
+[Condensed version of the post: hook, 3-5 bullet points or inline highlights, competitive positioning, engagement question, doc link, 3-5 hashtags. Can run longer, LinkedIn has no strict limit but keep it under ~1300 characters for readability.]
+\`\`\`
+
+### X (Twitter)
+
+\`\`\`text
+[Highly condensed version: single hook + key differentiators + engagement question + link. MUST fit within X's 280-character limit. Count the doc link as ~23 characters (X shortens all URLs via t.co regardless of actual length). Drop hashtags unless they fit; prioritize the message over tags.]
+\`\`\`
+```
+
+**Rules for platform copy:**
+- LinkedIn block: professional tone, can reuse bullets/checkmarks from the post body, include hashtags, include the full doc link
+- X block: strip formatting (no bullets/checkmarks), single tight paragraph, verify total length (message + link) stays at or under 280 characters, no more than 1-2 hashtags if space allows
+- Both blocks must stand alone (no reliance on the surrounding post) and use the same doc link as the source post
+- Wrap each in a fenced ` ```text ` code block so it's copy-pasteable as-is
+
+### 6. Organize and Store
 
 - Create folder: `docs/posts/YYYY/week-XX/` (week number or date range)
 - Name files: `post-1.md`, `post-2.md`, etc. (or thematic names if preferred)
 - Commit to repository with meaningful message (e.g., "posts: Add week 38 social media content")
 
-### 6. Validate Posts
+### 7. Validate Posts
 
 Before finalizing:
 - [ ] Each post has a clear, distinct angle or messaging strategy
@@ -116,6 +143,8 @@ Before finalizing:
 - [ ] Metadata is consistent and searchable
 - [ ] No broken markdown formatting
 - [ ] Post length is appropriate for target platforms (250-500 words)
+- [ ] LinkedIn and X copy-paste blocks are present and use the same doc link as the post
+- [ ] X block is verified to be at or under 280 characters (including link)
 
 ## Decision Points
 

@@ -38,6 +38,7 @@ Use this skill to update EdgeCDN-X documentation from verified changes in the CD
    - Run `mkdocs build` from `edgecdn-x.github.io/` when dependencies are available.
    - For newsletter changes, ensure each edited `.mjml` has a matching `.html`, and compile MJML to HTML when the local toolchain supports it.
    - Report skipped validation with the missing command or dependency.
+   - For any edited page with tables or nested lists, check the rendered `site/<page>/index.html` for a real `<table>`/nested `<ul>`/`<ol>` (see MkDocs Markdown Rendering Rules below) rather than assuming the Markdown source is correct.
 
 ## Decision Points
 
@@ -47,6 +48,15 @@ Use this skill to update EdgeCDN-X documentation from verified changes in the CD
 - If source material is incomplete, ask for the missing product fact instead of inventing behavior.
 - If a requested GTM claim is not supported by docs or code, rewrite it as a roadmap/status statement or ask for confirmation.
 - If a docs update would duplicate a long explanation that already exists elsewhere, link to the existing page instead.
+
+## MkDocs Markdown Rendering Rules
+
+`edgecdn-x.github.io` uses plain Python-Markdown (via `mkdocs.yml` `markdown_extensions`), which is stricter than GitHub-flavored Markdown. Verified rendering pitfalls:
+
+- **Tables require the `tables` extension.** It's enabled in `mkdocs.yml`; do not remove it. Without it, `| a | b |` rows render as literal text inside a `<p>`.
+- **Tables need a blank line before them.** A table immediately following a text line (e.g. `**Label**:` then `| ... |` on the next line with no blank line in between) is treated as a paragraph continuation and never becomes a `<table>`. Always insert a blank line before the header row.
+- **Nested list items need 4-space indentation, not 3.** Python-Markdown requires sub-list content indented by at least 4 spaces regardless of the parent marker width (e.g. `1. `, `2. ` is only 3 chars). A 3-space indent (`   - `) causes the nested item to flatten into the parent list as a sibling `<li>` instead of nesting inside a child `<ul>`/`<ol>`.
+- When adding or editing tables or nested lists in any `docs/*.md` page, grep for `^   [-*] ` (3-space indent) and tables missing a preceding blank line before considering the edit complete.
 
 ## Quality Criteria
 

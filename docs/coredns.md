@@ -16,28 +16,28 @@ The EdgeCDN-X DNS controller (`edgecdnx` plugin) routes DNS queries through the 
 
 1. **Direct Node Resolution** (optional): For queries matching the pattern `nodename.location.node.service.`, return the IP address of the specified node directly.
 2. **DNSEndpoint Lookup**: Match the query name and type to a `DNSEndpoint` CRD resource.
-   - For `Simple` endpoints, return configured target addresses directly.
-   - For `Geolocation` endpoints, determine the best location using prefix routing and geolookup.
+    - For `Simple` endpoints, return configured target addresses directly.
+    - For `Geolocation` endpoints, determine the best location using prefix routing and geolookup.
 3. **Location Selection**:
-   - **Prefix Routing**: Match the client's source IP (or EDNS client subnet) to a `PrefixList` CRD for direct location assignment.
-   - **Geolocation Routing**: If prefix routing doesn't apply, use geolocation data to select a location based on configured geo attributes and weights.
+    - **Prefix Routing**: Match the client's source IP (or EDNS client subnet) to a `PrefixList` CRD for direct location assignment.
+    - **Geolocation Routing**: If prefix routing doesn't apply, use geolocation data to select a location based on configured geo attributes and weights.
 4. **Candidate Node Pool**: Within the selected location, build a pool of healthy nodes:
-   - Include nodes from node groups whose labels (merged with location labels) match the endpoint's `routeSelector`.
-   - Exclude nodes and node groups in maintenance mode.
-   - Include nodes from child locations (locations with `spec.parent` pointing to the chosen location) if the child location is healthy (not in maintenance mode, no active alerts).
-   - Use deterministic hashing on the query name to select a specific node from the pool (maximizing cache affinity and minimizing cache misses).
-   - Enforce health checks: only include nodes with successful IPv4/IPv6 health status matching the query type (`A` for IPv4, `AAAA` for IPv6).
-   - Filter out nodes with active Prometheus alerts.
+    - Include nodes from node groups whose labels (merged with location labels) match the endpoint's `routeSelector`.
+    - Exclude nodes and node groups in maintenance mode.
+    - Include nodes from child locations (locations with `spec.parent` pointing to the chosen location) if the child location is healthy (not in maintenance mode, no active alerts).
+    - Use deterministic hashing on the query name to select a specific node from the pool (maximizing cache affinity and minimizing cache misses).
+    - Enforce health checks: only include nodes with successful IPv4/IPv6 health status matching the query type (`A` for IPv4, `AAAA` for IPv6).
+    - Filter out nodes with active Prometheus alerts.
 5. **Health-Aware Fallback**:
-   - If no healthy node exists in the chosen location, try the parent location (if configured via `spec.parent`).
-   - If the parent location also has no healthy nodes, try each location in the parent's `spec.fallbackLocations` in order.
-   - If there is no parent, try locations in the chosen location's `spec.fallbackLocations` directly.
-   - Skip any location that is in maintenance mode (`spec.maintenanceMode: true`) or has active alerts (`status.alerts` is non-empty).
-   - Continue until a location with a healthy node is found, or exhausts all fallback options.
+    - If no healthy node exists in the chosen location, try the parent location (if configured via `spec.parent`).
+    - If the parent location also has no healthy nodes, try each location in the parent's `spec.fallbackLocations` in order.
+    - If there is no parent, try locations in the chosen location's `spec.fallbackLocations` directly.
+    - Skip any location that is in maintenance mode (`spec.maintenanceMode: true`) or has active alerts (`status.alerts` is non-empty).
+    - Continue until a location with a healthy node is found, or exhausts all fallback options.
 6. **Response Generation**:
-   - **A/AAAA Response**: Return the IP address of the selected node.
-   - **CNAME Response**: Return a CNAME pointing to the node using the format `node_name.location.node.original-request.`
-   - **Response Type Selection**: Use the configured `dnsresponsetype` for normal DNS queries, or `grpcresponsetype` if the request originated from gRPC.
+    - **A/AAAA Response**: Return the IP address of the selected node.
+    - **CNAME Response**: Return a CNAME pointing to the node using the format `node_name.location.node.original-request.`
+    - **Response Type Selection**: Use the configured `dnsresponsetype` for normal DNS queries, or `grpcresponsetype` if the request originated from gRPC.
 7. **Zone Authority** (if no DNSEndpoint matched): Fall back to zone-authoritative behavior using `Zone` CRDs to return SOA, NS, or NXDOMAIN responses.
 
 Deploy this engine to each location where **edgecdnx.com/routing** label is set in [metadata](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Cluster/).
@@ -213,6 +213,7 @@ The DNS controller is configured in the CoreDNS Corefile via the `edgecdnx` plug
 ```
 
 **Configuration Directives**:
+
 | Directive | Required | Default | Description |
 | --- | --- | --- | --- |
 | `namespace` | Yes | none | Kubernetes namespace to watch for CRDs |
