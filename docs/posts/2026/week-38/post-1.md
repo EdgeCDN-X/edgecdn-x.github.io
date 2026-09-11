@@ -51,12 +51,13 @@ What's your current DNS/routing setup? Let us know in the comments.
 Read more: https://edgecdn-x.github.io/coredns.html
 
 #DNS #GSLB #Kubernetes #OpenSource #EdgeComputing
-```
 
 ### X (Twitter)
 
 ```text
 EdgeCDN-X is becoming a full GSLB platform on CoreDNS + Kubernetes: smart IP/geo routing, declarative CRDs, health-aware failover, zero-downtime updates. An open-source alternative to Route 53/Cloudflare lock-in. What's your DNS setup?
+```
 
 https://edgecdn-x.github.io/coredns.html
-```
+![EdgeCDN-X DNS platform routing overview](media/image.png)
+
