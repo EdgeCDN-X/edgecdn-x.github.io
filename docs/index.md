@@ -13,14 +13,16 @@ EdgeCDN-X is using a robust control plane built on top of Kubernetes API server 
 # Components
 
 * Control-Plane - GitOps / Declarative control plane using K8S CRDs helps to roll out the services across the desired locations. ArgoCD is used in the background for effective resource distribution
-* Routing - [CoreDNS](https://coredns.io/) based DNS server with improved logic. Effectively a GSLB, which can redirec the requests to the closest edge based on the client's location. **Features**:
-    * Prefix Routing (IPv4 or IPv6 based) prefixes can be defined
-    * Location based routing using GeoLookup
-    * Active Healthchecks
-    * Weight based routing, e.g. A/B testing, unequal load-balancing
-    * Fallback routing. Fallback to altenative region if no caapcity is available in the given region
-    * Dynamic reconfiguration without reloads. DNS server actively wach changes on k8s API
-    * Support customer specified Domains and Host Aliases.
+* Routing - [CoreDNS](https://coredns.io/) based Global Server Load Balancer (GSLB) with EdgeCDN-X DNS controller. Routes requests to the closest edge location based on client location, IP prefix, and health status. **Features**:
+    * Prefix-based routing (IPv4/IPv6) with EDNS client subnet support
+    * Geolocation-based routing with weighted location balancing
+    * Deterministic hash-based node selection within locations for cache affinity
+    * Active health checks with alert-aware node filtering
+    * Hierarchical location fallback with parent and sibling location support
+    * Dynamic reconfiguration without reloads—DNS controller watches K8S API for real-time changes
+    * Direct node access via DNS queries (node.location.node.service pattern)
+    * Configurable response modes (A/AAAA or CNAME) per request origin (DNS vs gRPC)
+    * Zone-authoritative DNS behavior for managed domains and records
 * Caching - Nginx Ingress based caching engine. The [ingress-nginx](https://kubernetes.github.io/ingress-nginx/) controller is used as it is without any forking. Currently all the functionality is achieved purely using customizations and __annotations__.
 * Secure-URLs - Custom component supporting URL signatures. To avoid access to certain objects publicly it is possible to use URL signatures to prevent unauthorized access to the resources. These signatures are often used for signing Stream (HLS or MPEG) playlists. Further down the line, once the signature is verified a session cookie is issued which the client can use to access the stream without having to Sign each segment's request. The session is only valid for a specific stream.
 * S3-Gateway - S3 gateway connector ensures that we can use private or public S3 buckets for our content origin.

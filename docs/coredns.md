@@ -3,204 +3,244 @@ tags:
   - crds
   - coredns
   - routing
+  - gslb
+  - dns
 ---
 # CoreDNS
-CoreDNS is used as a routing engine of the EdgeCDN-X Platform. The DNS resolves to IP address based on the user's location. CoreDNS is extended with several custom plugins for enhanced functionality.
 
-## Routing
-Routing component routes the individual requests via the following steps:
+EdgeCDN-X uses [CoreDNS](https://coredns.io/) as a Global Server Load Balancer (GSLB). The DNS controller routes requests based on client location, IP prefix, and service health, directing traffic to the most appropriate edge location.
 
-* Prefix static routing to individual location (sourced from static prefix list)
-* GeoLookup to locations if static routing returns no destination
-* Consistent hashing in location to maximize cache-hit ratio
-* Active healthchecks to make sure destinations are healthy and available
-* Fallback routing to different location if location has no active nodes
+## DNS Routing Engine
 
-Roll out this engine to each location where **edgecdnx.com/routing** label is set in [metadata](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Cluster/)
+The EdgeCDN-X DNS controller (`edgecdnx` plugin) routes DNS queries through the following decision logic:
 
+1. **Direct Node Resolution** (optional): For queries matching the pattern `nodename.location.node.service.`, return the IP address of the specified node directly.
+2. **DNSEndpoint Lookup**: Match the query name and type to a `DNSEndpoint` CRD resource.
+   - For `Simple` endpoints, return configured target addresses directly.
+   - For `Geolocation` endpoints, determine the best location using prefix routing and geolookup.
+3. **Location Selection**:
+   - **Prefix Routing**: Match the client's source IP (or EDNS client subnet) to a `PrefixList` CRD for direct location assignment.
+   - **Geolocation Routing**: If prefix routing doesn't apply, use geolocation data to select a location based on configured geo attributes and weights.
+4. **Candidate Node Pool**: Within the selected location, build a pool of healthy nodes:
+   - Include nodes from node groups whose labels (merged with location labels) match the endpoint's `routeSelector`.
+   - Exclude nodes and node groups in maintenance mode.
+   - Include nodes from child locations (locations with `spec.parent` pointing to the chosen location) if the child location is healthy (not in maintenance mode, no active alerts).
+   - Use deterministic hashing on the query name to select a specific node from the pool (maximizing cache affinity and minimizing cache misses).
+   - Enforce health checks: only include nodes with successful IPv4/IPv6 health status matching the query type (`A` for IPv4, `AAAA` for IPv6).
+   - Filter out nodes with active Prometheus alerts.
+5. **Health-Aware Fallback**:
+   - If no healthy node exists in the chosen location, try the parent location (if configured via `spec.parent`).
+   - If the parent location also has no healthy nodes, try each location in the parent's `spec.fallbackLocations` in order.
+   - If there is no parent, try locations in the chosen location's `spec.fallbackLocations` directly.
+   - Skip any location that is in maintenance mode (`spec.maintenanceMode: true`) or has active alerts (`status.alerts` is non-empty).
+   - Continue until a location with a healthy node is found, or exhausts all fallback options.
+6. **Response Generation**:
+   - **A/AAAA Response**: Return the IP address of the selected node.
+   - **CNAME Response**: Return a CNAME pointing to the node using the format `node_name.location.node.original-request.`
+   - **Response Type Selection**: Use the configured `dnsresponsetype` for normal DNS queries, or `grpcresponsetype` if the request originated from gRPC.
+7. **Zone Authority** (if no DNSEndpoint matched): Fall back to zone-authoritative behavior using `Zone` CRDs to return SOA, NS, or NXDOMAIN responses.
 
-### Static Prefix routing
-[edgecdnx-prefixlist](https://github.com/EdgeCDN-X/edgecdnx-prefixlist) CoreDNS module gathers all the prefixes for the individual locations. These prefixes must be normalized and must be non overlapping. There's a helper [operator](https://github.com/EdgeCDN-X/edgecdnx-controller) which helps to achieve Prefix Consolidation and Supernet subnetting, to make sure there are no overlaps in the Prefixes. The Module is using CoreDNS's Metadata interface to find the desired destination for a given prefix. 
+Deploy this engine to each location where **edgecdnx.com/routing** label is set in [metadata](https://argo-cd.readthedocs.io/en/stable/operator-manual/applicationset/Generators-Cluster/).
 
-**Features**:
+## Prefix-Based Routing
 
-* Routing to location based on Client IP address 
-* Prefixes are stored in a fast balanced AVL Tree to ensure speedy lookups
-* EDNS0 Subnet extension support
-* IPv4 and IPv6 Supported
+The `PrefixList` CRD defines IP address ranges (CIDR blocks) and their destination locations. The DNS controller matches incoming client source IPs (or EDNS client subnet values) against these prefixes to determine the target location.
 
-The prefixes are defined with a CRD and an example definition is seen here:
+**Capabilities**:
+- IPv4 and IPv6 CIDR routing
+- EDNS0 client subnet extension support for fine-grained client location detection
+- Non-overlapping prefix consolidation (managed by the EdgeCDN-X controller)
 
+**Example PrefixList**:
 ```yaml
----
 apiVersion: infrastructure.edgecdnx.com/v1alpha1
 kind: PrefixList
 metadata:
   name: prefixlist-us-west-1
 spec:
-  source: Static
-  destination: us-west-1
+  destination: us-west-1  # Target location
   prefix:
     v4:
       - address: 192.168.100.128
         size: 27
       - address: 192.168.100.0
         size: 27
-      - address: 192.168.113.225
-        size: 24
     v6: []
 ```
 
-These CRDs are consumed by the module in CoreDNS. The module has to be configured accordingly:
-```
-edgecdnxprefixlist {namespace}
-```
+## Geolocation-Based Routing
 
-### GeoLookup routing
-[edgecdnx-geolookup](https://github.com/EdgeCDN-X/edgecdnx-geolookup) CoreDNS module finds the most suitable locatio based on MMDB2 DB. This module uses [geoip](https://coredns.io/plugins/geoip/) metadata to enrich the necessary fields.
-Geolookup module assigns weights and score for each request and the location is based on this score. If multiple locations are found with the same score, the requests are balanced based on associated weight. (e.g. eu-west and eu-east routing to Germany in ratio of 40:60)
+When prefix routing does not match (or is not applicable), the DNS controller falls back to geolocation routing. Each `Location` CRD defines geolocation attributes and weights for scoring requests by geographic proximity.
 
-Geolookup configurations are coming from CRDs with an example configuration shown here:
+**Example Location**:
 ```yaml
----
 apiVersion: infrastructure.edgecdnx.com/v1alpha1
 kind: Location
 metadata:
-  annotations:
   name: nyc1-c1
+  labels:
+    tier: primary
+    region: us-east
 spec:
+  # (Optional) Parent location for hierarchical fallback and shared configuration
+  parent: us-east-1
+  # Fallback targets when this location has no healthy nodes
   fallbackLocations:
-  - fra1-c1
+    - fra1-c1
+    - lax1-c1
+  # Maintenance mode: when true, this location is skipped in routing decisions
+  maintenanceMode: false
+  # Geolocation-based routing configuration
   geoLookup:
+    weight: 100  # Weight relative to other locations
     attributes:
       geoip/continent/code:
-        values:
-        - value: AN
-        - value: NA
-        - value: OC
-        - value: SA
-        - value: AS
         weight: 1000
-    weight: 50
+        values:
+          - value: NA  # North America
+          - value: SA  # South America
+  # Node groups organize nodes by cache profile and configuration
   nodeGroups:
-  - cacheConfig:
-      inactive: 10080m
-      keysZone: 100m
-      maxSize: 4096m
-      name: ssd
-      path: /var/cache/ssd
-    name: ssd
-    nodeSelector:
-      kubernetes.civo.com/civo-node-pool: nyc1-c1
-    nodes:
-    - ipv4: 74.220.30.216
-      name: n1
+    - name: ssd
+      flavor: ""  # Optional flavor to distinguish variants of the same cache type
+      # Kubernetes label selector for discovering nodes via DaemonSet
+      nodeSelector:
+        kubernetes.civo.com/civo-node-pool: nyc1-c1
+      # Labels merged with Location labels for route selector matching
+      labels:
+        cache-tier: primary
+      # Generic metadata for cache configuration (replaces deprecated cacheConfig)
+      metadata:
+        path: /var/cache/ssd
+        maxSize: 4096m
+        keysZone: 100m
+        inactive: 10080m  # Inactivity timeout
+      # Individual nodes in this group
+      nodes:
+        - name: n1
+          ipv4: 74.220.30.216
+          ipv6: "2001:db8::1"
+          # Maintenance mode: when true, this node is excluded from routing
+          maintenanceMode: false
 ```
 
-The nodes for the specific location have to be defined here. These nodes are automatically healthchecked and evaluated when routing decisions are made. Nodes can be groupped into nodeGroups. Each Node Group can have a different cache configuration. This is used if we have services with varying profiles, where different caching performance is required. This cache selector is configurable in the service definition.
+**Route Selector Matching**: When a DNSEndpoint specifies a `routeSelector`, the DNS controller matches it against the combined labels of each location and its node groups. For example:
+```yaml
+# In DNSEndpoint
+routeSelector:
+  tier: primary  # Must match a label from Location or NodeGroup
 
-These CRDs are consumed by the module in CoreDNS. The module has to be configured accordingly:
+# Matches this Location because it has tier: primary at the metadata level
+# OR if a NodeGroup has labels: {tier: primary}
 ```
-        edgecdnxgeolookup {
-            namespace ${namespace}
-            recordttl 30
-        }
+
+Node groups can be configured with different cache profiles for services requiring varied caching performance. Multiple node groups with the same name but different flavors can coexist within a location for redundancy or specialized caching needs.
+
+
+## DNSEndpoint Configuration
+
+`DNSEndpoint` CRDs define which domains are served and how they should be routed (Simple or Geolocation-based).
+
+**Simple Endpoint** (fixed target addresses):
+```yaml
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: static-origin
+spec:
+  fqdn: static.example.com
+  recordType: A
+  targets: ["203.0.113.10"]  # Direct answers
+  recordTTL: 300
 ```
 
+**Geolocation Endpoint** (location-aware routing):
+```yaml
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: cdn-service
+spec:
+  fqdn: cdn.example.com
+  recordType: A
+  routeSelector:  # Labels to match against location definitions
+    tier: primary
+  recordTTL: 60
+  dnsResponseType: A_AAAA  # or CNAME
+```
 
-### Service catalog
-[edgecdnx-services](https://github.com/EdgeCDN-X/edgecdnx-services). This module is responsible for building the SOA and NS records and also enriches metadata with customer specific information for better routing decitions down the line. All thes services are auto loaded via the k8s client, so it is not required to reload the Configuration when a new service is configured.
+## Zone Configuration
 
-#### Zone Configuration
-It is possible to define customer specific Zones, if the customer wishes to bring their own domain. With a CRD it is possible to configure the necessary SOA and NS records. Once the zone is configured, it's the customer's responsibility to configure the corresponding NS records on the parent DNS server.
+`Zone` CRDs enable you to serve DNS zones with authoritative SOA and NS records, useful for hosting your own domain apex or delegating subdomains.
 
-Example Zone CRD:
+**Example Zone**:
 ```yaml
 apiVersion: infrastructure.edgecdnx.com/v1alpha1
 kind: Zone
 metadata:
-  name: cdn.tbotech.sk
+  name: example.com
 spec:
-  email: noc.cdn.tbotech.sk
-  zone: cdn.tbotech.sk
+  zone: example.com
+  email: noc@example.com
 ```
 
-This CRD will create SOA and NS records for cdn.tbotech.sk
 
-#### Service Configuration
+## DNS Controller Configuration
 
-If a service is configured, CoreDNS will load the service and respont do A and AAAA requests for the given domain.
+The DNS controller is configured in the CoreDNS Corefile via the `edgecdnx` plugin directive:
 
-Example Service:
-```yaml
----
-apiVersion: infrastructure.edgecdnx.com/v1alpha1
-kind: Service
-metadata:
-  name: ytdemo.democdn.edgecdnx.com
-spec:
-  cache: ssd
-  cacheKey:
-    queryParams:
-    - v
-    - ver
-    - version
-  certificate: {}
-  customer:
-    id: 1
-    name: tbotech
-  domain: ytdemo.democdn.edgecdnx.com
-  hostAliases:
-  - name: cdn.tbotech.sk
-  name: ytdemo.democdn.edgecdnx.com
-  originType: static
-  staticOrigins:
-  - hostHeader: tbotech.sk
-    port: 443
-    scheme: Https
-    upstream: tbotech.sk
-  waf:
-    enabled: true
-```
-
-This resource will configure CoreDNS to respond to `ytdemo.democdn.edgecdnx.com` and `cdn.tbotech.sk` domains. Zone configuration for both domains have to be present too.
-
-
-# Full configuration
-Since few of these services are dependent on each other, here is an example full config with all the required dependencies:
-
-
-```yaml
+```txt
 .:53 {
-    ready
-    debug
-    metadata
-    log . "{combined}"
-    errors {
-        stacktrace
-    }
-    health {
-        lameduck 5s
-    }
-    edgecdnxprefixlist edgecdnx
-    geoip /etc/edgecdnx/geolookup/GeoLite2-City.mmdb {
-        edns-subnet
-    }
-    edgecdnxgeolookup {
-        namespace edgecdnx
-        recordttl 30
-    }
-    edgecdnxservices {
-        namespace edgecdnx
-        soa ns1
-        ns ns1 74.220.25.73
-        ns ns2 54.44.35.25
-    }
+  errors
+  health
+  ready
+  
+  edgecdnx . {
+    namespace edgecdnx              # K8S namespace containing EdgeCDN-X CRDs
+    soa ns1                         # SOA MNAME label prefix
+    ns ns1.edge.example.com. 203.0.113.10   # NS records (repeatable)
+    ns ns2.edge.example.com. 203.0.113.11
+    recordttl 60                    # Default TTL for generated answers
+    dnsresponsetype A_AAAA          # Response type for DNS queries (A_AAAA or CNAME)
+    grpcresponsetype CNAME          # Response type for gRPC-originated requests
+  }
+  
+  prometheus :9153
+  forward . 1.1.1.1 8.8.8.8        # Upstream resolvers for fallthrough
+  cache 30
+  reload
 }
 ```
 
-If multiple DNS servers are present, the NS configuration whould be available for each server in the edgecdnxservice modules. 
+**Configuration Directives**:
+| Directive | Required | Default | Description |
+| --- | --- | --- | --- |
+| `namespace` | Yes | none | Kubernetes namespace to watch for CRDs |
+| `soa` | Yes | none | SOA MNAME label prefix (e.g., `ns1` → `ns1.zone.`) |
+| `ns` | Recommended | empty | NS record entries (repeatable); format: `ns <hostname> <ipv4>` |
+| `recordttl` | No | 60 | Default TTL for generated answers (in seconds) |
+| `dnsresponsetype` | No | A_AAAA | Response type for normal DNS queries: `A_AAAA` or `CNAME` |
+| `grpcresponsetype` | No | CNAME | Response type for gRPC requests: `A_AAAA` or `CNAME` |
 
-# Source code
+## Operational Considerations
 
-The full fork with these modules is available at [CoreDNS](https://github.com/EdgeCDN-X/coredns). Images are published at [Docker HUb](https://hub.docker.com/repository/docker/fr6nco/coredns/tags)
+### Maintenance and Health Checks
+- **Maintenance Mode**: Set `spec.maintenanceMode: true` on a Location or Node to temporarily exclude it from routing without deleting the resource.
+- **Health Conditions**: Nodes have health conditions tracked for IPv4 and IPv6 separately (`IPV4HealthCheckSuccessful`, `IPV6HealthCheckSuccessful`). The DNS controller respects these when selecting nodes for `A` or `AAAA` queries.
+- **Prometheus Alerts**: Active alerts on locations or nodes (via `status.alerts` or node `status.nodeStatus[name].alerts`) cause them to be skipped in routing. Configure `spec.alerts` with `AlertName` and optional label matchers to watch external Prometheus alerts.
+
+### Plugin Readiness
+- The DNS controller plugin readiness is tied to Kubernetes informer synchronization for `Zone`, `DNSEndpoint`, and `PrefixList` watchers.
+- If informers have not synced yet, the CoreDNS `ready` probe integration will report the plugin as not ready.
+- Location informers are watched independently and do not block plugin readiness.
+
+### Fallthrough Behavior
+- If the DNS controller cannot find a matching DNSEndpoint, location, or healthy node, the query is passed to the next plugin in the CoreDNS chain (typically `forward` to upstream resolvers).
+- Direct node requests that reference a non-existent service, location, or node also fall through.
+
+## Related Resources
+
+- [EdgeCDN-X CRD Reference](crds.md)
+- [EdgeCDN-X Controller - Routing](edgecdnx-controller-router.md)
+- [Location CRD Configuration](locations.md)
+- [CoreDNS Documentation](https://coredns.io/)
