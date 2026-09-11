@@ -18,6 +18,7 @@ Use this skill to create high-quality social media posts for product launches, f
 - Posts stored in organized folder structure: `docs/posts/YEAR/week-XX/`
 - Metadata (title, date, tags) included for blogging/scheduling systems
 - Each post includes a **Social Media Copy** section with separate, ready-to-paste blocks for **LinkedIn** and **X** (Twitter)
+- Each post includes a **Schedule** section with clickable per-platform "Post Now" and "Add to Calendar" links
 - Optional: Emoji-free or platform-specific formatting applied
 
 ## Procedure
@@ -126,13 +127,40 @@ At the end of every post file, add a `## Social Media Copy` section with two fen
 - Both blocks must stand alone (no reliance on the surrounding post) and use the same doc link as the source post
 - Wrap each in a fenced ` ```text ` code block so it's copy-pasteable as-is
 
-### 6. Organize and Store
+### 6. Generate the Schedule Section
+
+Always add a `## Schedule` section immediately after `## Social Media Copy`, containing a Markdown table with clickable per-platform links so the post can be opened or reminded without retyping content:
+
+```markdown
+## Schedule
+
+Click a link below to open the composer prefilled with this post's copy, or use the calendar link to pick your own posting date/time (edit the date in the calendar popup before saving).
+
+| Platform | Post Now | Add to Calendar |
+| --- | --- | --- |
+| X | [Open X composer](https://twitter.com/intent/tweet?text=...) | [Add X post reminder](https://www.google.com/calendar/render?action=TEMPLATE&text=...&dates=...&details=...&ctz=Europe%2FBerlin) |
+| LinkedIn | [Open LinkedIn composer](https://www.linkedin.com/feed/?shareActive=true&text=...) | [Add LinkedIn post reminder](https://www.google.com/calendar/render?action=TEMPLATE&text=...&dates=...&details=...&ctz=Europe%2FBerlin) |
+
+*Note: X's intent link opens a pre-filled tweet composer for immediate posting (X doesn't support scheduling via URL). LinkedIn's prefill parameter is unofficial and may not always populate the text box — if it doesn't, use the copy block above. "Add to Calendar" links default to CET/CEST (Europe/Berlin) and create a reminder event with the post copy in the description; they don't auto-publish.*
+```
+
+**How to build the links:**
+- **X composer**: `https://twitter.com/intent/tweet?text=<url-encoded X copy block>`
+- **LinkedIn composer**: `https://www.linkedin.com/feed/?shareActive=true&text=<url-encoded LinkedIn copy block>` (unofficial parameter; call out in the note that it may not populate)
+- **Calendar reminders**: `https://www.google.com/calendar/render?action=TEMPLATE&text=<event title>&dates=<startUTC>/<endUTC>&details=<url-encoded platform copy block>&ctz=Europe/Berlin`
+  - Default timezone is **CET/CEST (`Europe/Berlin`)** unless the user specifies otherwise
+  - Derive `dates` (UTC, `YYYYMMDDTHHMMSSZ` format, 15-30 min duration) from the post's recommended posting slot, converted from the CET/CEST local time to UTC
+  - Default recommended slots (CET/CEST business hours) absent other guidance: LinkedIn Tue/Wed/Thu 9:00-10:00 AM, Fri 8:30-9:30 AM; X Tue-Thu 11:00 AM-1:00 PM, Fri 10:00-11:00 AM
+- Use Python (`urllib.parse.urlencode` with `quote_via=up.quote`) or an equivalent encoder to build these URLs — never hand-encode special characters, since emoji/punctuation must be percent-encoded correctly
+- Build one link pair per platform per post; do not share links across posts
+
+### 7. Organize and Store
 
 - Create folder: `docs/posts/YYYY/week-XX/` (week number or date range)
 - Name files: `post-1.md`, `post-2.md`, etc. (or thematic names if preferred)
 - Commit to repository with meaningful message (e.g., "posts: Add week 38 social media content")
 
-### 7. Validate Posts
+### 8. Validate Posts
 
 Before finalizing:
 - [ ] Each post has a clear, distinct angle or messaging strategy
@@ -145,6 +173,7 @@ Before finalizing:
 - [ ] Post length is appropriate for target platforms (250-500 words)
 - [ ] LinkedIn and X copy-paste blocks are present and use the same doc link as the post
 - [ ] X block is verified to be at or under 280 characters (including link)
+- [ ] Schedule section is present with working, correctly URL-encoded X, LinkedIn, and calendar links, defaulted to CET/CEST
 
 ## Decision Points
 
@@ -171,6 +200,7 @@ End with:
 - **Posts Created**: List file names and angles
 - **Folder Structure**: Where posts are stored
 - **Metadata**: Dates, tags, and scheduling info
+- **Schedule Links**: Confirmation each post has working Post Now / Add to Calendar links (CET/CEST default)
 - **Validation**: Confirmation all quality criteria met
 - **Next Steps**: Suggestions for platform-specific adaptation (LinkedIn, Twitter, Dev.to, etc.) if needed
 
