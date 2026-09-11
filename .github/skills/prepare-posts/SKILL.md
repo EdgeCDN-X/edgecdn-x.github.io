@@ -182,6 +182,7 @@ Before finalizing:
 - **Engagement Style**: Direct questions work for Twitter/LinkedIn; multiple-choice or scenarios work better on technical forums
 - **Emoji Usage**: Follow brand guidelines; avoid unless intentionally playful. Remove if brand is more professional
 - **Link Targets**: Always link to current, relevant documentation or product pages (never broken links)
+- **Documentation URLs**: Use extensionless published paths (for example, `https://edgecdn-x.github.io/coredns`) and never append `.html`; apply the same URL form in post copy, composer links, and calendar reminder details
 
 ## Quality Criteria
 
