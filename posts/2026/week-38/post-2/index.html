@@ -1,0 +1,1099 @@
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+      
+      
+        <link rel="canonical" href="https://edgecdn-x.github.io/posts/2026/week-38/post-2/">
+      
+      
+      
+      
+        
+      
+      
+      <link rel="icon" href="../../../../assets/images/favicon.png">
+      <meta name="generator" content="mkdocs-1.6.1, mkdocs-material-9.7.7">
+    
+    
+      
+        <title>GSLB Done Right - Prefix Routing + Geolocation + Health Awareness - EdgeCDN-X</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../../../assets/stylesheets/main.ec1eaa64.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+    <script>__md_scope=new URL("../../../..",location),__md_hash=e=>[...e].reduce(((e,_)=>(e<<5)-e+_.charCodeAt(0)),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+  </head>
+  
+  
+    <body dir="ltr">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#social-media-copy" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+    </div>
+    
+    
+      
+
+  
+
+<header class="md-header md-header--shadow" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../../../.." title="EdgeCDN-X" class="md-header__button md-logo" aria-label="EdgeCDN-X" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3zm0 5h18v2H3zm0 5h18v2H3z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            EdgeCDN-X
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              GSLB Done Right - Prefix Routing + Geolocation + Health Awareness
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+    
+      <script>var palette=__md_get("__palette");if(palette&&palette.color){if("(prefers-color-scheme)"===palette.color.media){var media=matchMedia("(prefers-color-scheme: light)"),input=document.querySelector(media.matches?"[data-md-color-media='(prefers-color-scheme: light)']":"[data-md-color-media='(prefers-color-scheme: dark)']");palette.color.media=input.getAttribute("data-md-color-media"),palette.color.scheme=input.getAttribute("data-md-color-scheme"),palette.color.primary=input.getAttribute("data-md-color-primary"),palette.color.accent=input.getAttribute("data-md-color-accent")}for(var[key,value]of Object.entries(palette.color))document.body.setAttribute("data-md-color-"+key,value)}</script>
+    
+    
+    
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+
+<nav class="md-nav md-nav--primary" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../../../.." title="EdgeCDN-X" class="md-nav__button md-logo" aria-label="EdgeCDN-X" data-md-component="logo">
+      
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12 8a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3 3 3 0 0 0 3 3m0 3.54C9.64 9.35 6.5 8 3 8v11c3.5 0 6.64 1.35 9 3.54 2.36-2.19 5.5-3.54 9-3.54V8c-3.5 0-6.64 1.35-9 3.54"/></svg>
+
+    </a>
+    EdgeCDN-X
+  </label>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../.." class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Overview
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../architecture/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Architecture
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../crds/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CRDs
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4" >
+        
+          
+          <label class="md-nav__link" for="__nav_4" id="__nav_4_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Deployment
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_4_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Deployment
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_1" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_1" id="__nav_4_1_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Control Plane
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_1_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_1">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Control Plane
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../argocd/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    ArgoCD
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../locations/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Registering Locations
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../core-components/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Core Components
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../edgecdnx-controller/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EdgeCDN-X Controller
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_2" id="__nav_4_2_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Routing
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_2">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Routing
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../coredns/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CoreDNS
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../coredns-deployment/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    CoreDNS Deployment
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../edgecdnx-controller-router/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EdgeCDN-X Controller - Routing
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+    
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_4_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_4_3" id="__nav_4_3_label" tabindex="0">
+            
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Caching
+  
+
+    
+  </span>
+  
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_4_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_4_3">
+            <span class="md-nav__icon md-icon"></span>
+            
+  
+    Caching
+  
+
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../cache-prerequisites/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Prerequisites
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../ingress-nginx/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Ingress NGINX
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../edgecdnx-controller-cache/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    EdgeCDN-X Controller - Caching
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../secure-urls/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Secure Urls
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../s3-gateway/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    S3 Gateway
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../tags/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Tags
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../../contact/" class="md-nav__link">
+        
+  
+  
+  <span class="md-ellipsis">
+    
+  
+    Contact
+  
+
+    
+  </span>
+  
+  
+
+      </a>
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#social-media-copy" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Social Media Copy
+      
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Social Media Copy">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#linkedin" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        LinkedIn
+      
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#x-twitter" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        X (Twitter)
+      
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#schedule" class="md-nav__link">
+    <span class="md-ellipsis">
+      
+        Schedule
+      
+    </span>
+  </a>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  <nav class="md-tags" >
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:dns" class="md-tag">dns</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:gslb" class="md-tag">gslb</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:kubernetes" class="md-tag">kubernetes</a>
+      
+    
+      
+      
+      
+      
+        <a href="../../../../tags/#tag:routing" class="md-tag">routing</a>
+      
+    
+  </nav>
+
+
+
+  <h1>GSLB Done Right - Prefix Routing + Geolocation + Health Awareness</h1>
+
+<p><strong>GSLB Without the Complexity</strong></p>
+<p>We're building a <strong>full-fledged DNS platform</strong> in EdgeCDN-X that handles Global Server Load Balancing the way modern edge platforms should.</p>
+<p><strong>The EdgeCDN-X GSLB Stack:</strong></p>
+<p><strong>Multi-Layer Routing Decisions</strong>
+- Client IP prefix matching (EDNS client subnet support)
+- Geolocation-based steering with weighted location balancing
+- Deterministic hashing for cache affinity</p>
+<p><strong>Health-Aware Traffic Management</strong>
+- Real-time Prometheus alert filtering
+- Per-node and per-location maintenance mode
+- Automatic fallback to secondary locations</p>
+<p><strong>Built on Kubernetes Principles</strong>
+- Declarative routing via CRDs (Location, DNSEndpoint, PrefixList, Zone)
+- GitOps-friendly with ArgoCD integration
+- Dynamic reconfiguration without restarts</p>
+<p><strong>The problem:</strong> Services like Route 53, Azure Traffic Manager, and Cloudflare are powerful, but they trap you in walled gardens.</p>
+<p><strong>Our solution:</strong> A cloud-agnostic, open-source DNS platform you can run anywhere—on your edge locations, your cloud, or on-prem.</p>
+<hr />
+<p><strong>What routing challenges are you facing right now?</strong></p>
+<ul>
+<li>Struggling with failover complexity?</li>
+<li>Need geolocation steering without vendor lock-in?</li>
+<li>Looking for health-based traffic management?</li>
+<li>Building your own edge network?</li>
+</ul>
+<p>Tell us what you're trying to solve—we're building EdgeCDN-X to solve it.</p>
+<p><em>Explore the complete setup in our <a href="https://edgecdnx.com/blog/global-server-load-balancing-now-in-your-hands-find-out-how">GSLB configuration article</a>.</em></p>
+<h2 id="social-media-copy">Social Media Copy</h2>
+<h3 id="linkedin">LinkedIn</h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>We're building a full-fledged DNS platform in EdgeCDN-X that handles Global Server Load Balancing the way modern edge platforms should.
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>The EdgeCDN-X GSLB stack:
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>• Multi-layer routing: IP prefix matching, geolocation steering, deterministic hashing
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>• Health-aware traffic management with real-time alert filtering and maintenance modes
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>• Kubernetes-native: declarative CRDs, GitOps-friendly, dynamic reconfiguration
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>Route 53, Azure Traffic Manager, and Cloudflare are powerful — but they lock you into walled gardens. EdgeCDN-X is cloud-agnostic and open-source, so you can run it anywhere.
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a>What routing challenges are you facing? Failover complexity, geolocation steering, or building your own edge network? Tell us — we're building EdgeCDN-X to solve it.
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>Learn more: https://edgecdnx.com/blog/global-server-load-balancing-now-in-your-hands-find-out-how
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a>#GSLB #DNS #Kubernetes #OpenSource #CloudNative
+</span></code></pre></div>
+<h3 id="x-twitter">X (Twitter)</h3>
+<div class="language-text highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>GSLB without the complexity: EdgeCDN-X combines IP prefix + geo routing, health-aware failover, and Kubernetes-native CRDs — no vendor lock-in like Route 53 or Cloudflare. What routing challenges are you solving?
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>https://edgecdnx.com/blog/global-server-load-balancing-now-in-your-hands-find-out-how
+</span></code></pre></div>
+<h2 id="schedule">Schedule</h2>
+<p>Click a link below to open the composer prefilled with this post's copy, or use the calendar link to pick your own posting date/time (edit the date in the calendar popup before saving).</p>
+<table>
+<thead>
+<tr>
+<th>Platform</th>
+<th>Post Now</th>
+<th>Add to Calendar</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>X</td>
+<td><a href="https://twitter.com/intent/tweet?text=GSLB%20without%20the%20complexity%3A%20EdgeCDN-X%20combines%20IP%20prefix%20%2B%20geo%20routing%2C%20health-aware%20failover%2C%20and%20Kubernetes-native%20CRDs%20%E2%80%94%20no%20vendor%20lock-in%20like%20Route%2053%20or%20Cloudflare.%20What%20routing%20challenges%20are%20you%20solving%3F%0A%0Ahttps%3A%2F%2Fedgecdnx.com%2Fblog%2Fglobal-server-load-balancing-now-in-your-hands-find-out-how">Open X composer</a></td>
+<td><a href="https://www.google.com/calendar/render?action=TEMPLATE&amp;text=Post%20to%20X%3A%20GSLB%20Done%20Right&amp;dates=20260918T080000Z%2F20260918T081500Z&amp;details=GSLB%20without%20the%20complexity%3A%20EdgeCDN-X%20combines%20IP%20prefix%20%2B%20geo%20routing%2C%20health-aware%20failover%2C%20and%20Kubernetes-native%20CRDs%20%E2%80%94%20no%20vendor%20lock-in%20like%20Route%2053%20or%20Cloudflare.%20What%20routing%20challenges%20are%20you%20solving%3F%0A%0Ahttps%3A%2F%2Fedgecdnx.com%2Fblog%2Fglobal-server-load-balancing-now-in-your-hands-find-out-how&amp;ctz=Europe%2FBerlin">Add X post reminder</a></td>
+</tr>
+<tr>
+<td>LinkedIn</td>
+<td><a href="https://www.linkedin.com/feed/?shareActive=true&amp;text=We%27re%20building%20a%20full-fledged%20DNS%20platform%20in%20EdgeCDN-X%20that%20handles%20Global%20Server%20Load%20Balancing%20the%20way%20modern%20edge%20platforms%20should.%0A%0AThe%20EdgeCDN-X%20GSLB%20stack%3A%0A%E2%80%A2%20Multi-layer%20routing%3A%20IP%20prefix%20matching%2C%20geolocation%20steering%2C%20deterministic%20hashing%0A%E2%80%A2%20Health-aware%20traffic%20management%20with%20real-time%20alert%20filtering%20and%20maintenance%20modes%0A%E2%80%A2%20Kubernetes-native%3A%20declarative%20CRDs%2C%20GitOps-friendly%2C%20dynamic%20reconfiguration%0A%0ARoute%2053%2C%20Azure%20Traffic%20Manager%2C%20and%20Cloudflare%20are%20powerful%20%E2%80%94%20but%20they%20lock%20you%20into%20walled%20gardens.%20EdgeCDN-X%20is%20cloud-agnostic%20and%20open-source%2C%20so%20you%20can%20run%20it%20anywhere.%0A%0AWhat%20routing%20challenges%20are%20you%20facing%3F%20Failover%20complexity%2C%20geolocation%20steering%2C%20or%20building%20your%20own%20edge%20network%3F%20Tell%20us%20%E2%80%94%20we%27re%20building%20EdgeCDN-X%20to%20solve%20it.%0A%0ALearn%20more%3A%20https%3A%2F%2Fedgecdnx.com%2Fblog%2Fglobal-server-load-balancing-now-in-your-hands-find-out-how%0A%0A%23GSLB%20%23DNS%20%23Kubernetes%20%23OpenSource%20%23CloudNative">Open LinkedIn composer</a></td>
+<td><a href="https://www.google.com/calendar/render?action=TEMPLATE&amp;text=Post%20to%20LinkedIn%3A%20GSLB%20Done%20Right&amp;dates=20260918T063000Z%2F20260918T070000Z&amp;details=We%27re%20building%20a%20full-fledged%20DNS%20platform%20in%20EdgeCDN-X%20that%20handles%20Global%20Server%20Load%20Balancing%20the%20way%20modern%20edge%20platforms%20should.%0A%0AThe%20EdgeCDN-X%20GSLB%20stack%3A%0A%E2%80%A2%20Multi-layer%20routing%3A%20IP%20prefix%20matching%2C%20geolocation%20steering%2C%20deterministic%20hashing%0A%E2%80%A2%20Health-aware%20traffic%20management%20with%20real-time%20alert%20filtering%20and%20maintenance%20modes%0A%E2%80%A2%20Kubernetes-native%3A%20declarative%20CRDs%2C%20GitOps-friendly%2C%20dynamic%20reconfiguration%0A%0ARoute%2053%2C%20Azure%20Traffic%20Manager%2C%20and%20Cloudflare%20are%20powerful%20%E2%80%94%20but%20they%20lock%20you%20into%20walled%20gardens.%20EdgeCDN-X%20is%20cloud-agnostic%20and%20open-source%2C%20so%20you%20can%20run%20it%20anywhere.%0A%0AWhat%20routing%20challenges%20are%20you%20facing%3F%20Failover%20complexity%2C%20geolocation%20steering%2C%20or%20building%20your%20own%20edge%20network%3F%20Tell%20us%20%E2%80%94%20we%27re%20building%20EdgeCDN-X%20to%20solve%20it.%0A%0ALearn%20more%3A%20https%3A%2F%2Fedgecdnx.com%2Fblog%2Fglobal-server-load-balancing-now-in-your-hands-find-out-how%0A%0A%23GSLB%20%23DNS%20%23Kubernetes%20%23OpenSource%20%23CloudNative&amp;ctz=Europe%2FBerlin">Add LinkedIn post reminder</a></td>
+</tr>
+</tbody>
+</table>
+<p><em>Note: X's intent link opens a pre-filled tweet composer for immediate posting (X doesn't support scheduling via URL). LinkedIn's prefill parameter is unofficial and may not always populate the text box — if it doesn't, use the copy block above. "Add to Calendar" links default to CET/CEST (Europe/Berlin) and create a reminder event with the post copy in the description; they don't auto-publish.</em></p>
+
+
+
+
+
+
+
+  
+  
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+  <script>var tabs=__md_get("__tabs");if(Array.isArray(tabs))e:for(var set of document.querySelectorAll(".tabbed-set")){var labels=set.querySelector(".tabbed-labels");for(var tab of tabs)for(var label of labels.getElementsByTagName("label"))if(label.innerText.trim()===tab){var input=document.getElementById(label.htmlFor);input.checked=!0;continue e}}</script>
+
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    
+      
+      
+      <script id="__config" type="application/json">{"annotate": null, "base": "../../../..", "features": ["content.tabs.link"], "search": "../../../../assets/javascripts/workers/search.2c215733.min.js", "tags": null, "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": null}</script>
+    
+    
+      <script src="../../../../assets/javascripts/bundle.d7400e89.min.js"></script>
+      
+    
+  </body>
+</html>
