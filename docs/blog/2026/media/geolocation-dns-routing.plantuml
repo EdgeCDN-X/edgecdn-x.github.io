@@ -1,0 +1,41 @@
+@startuml geolocation_dns_routing
+title Geolocation-aware DNS routing with EdgeCDN-X
+
+skinparam backgroundColor #FFFFFF
+skinparam shadowing false
+skinparam defaultFontName Helvetica
+skinparam ArrowColor #334155
+skinparam rectangle {
+  BorderColor #334155
+  BackgroundColor #F8FAFC
+}
+skinparam node {
+  BorderColor #0F766E
+  BackgroundColor #ECFDF5
+}
+skinparam database {
+  BorderColor #0369A1
+  BackgroundColor #F0F9FF
+}
+
+actor "European client" as EU
+actor "North American client" as NA
+rectangle "CoreDNS\nedgecdnx plugin" as DNS
+database "Kubernetes API\nZone + DNSEndpoint + Locations" as K8S
+node "fra1-c1\nEU preferred\n203.0.113.20" as FRA
+node "nyc1-c1\nNA preferred\n203.0.113.30" as NYC
+
+K8S --> DNS : Watches CRs
+EU --> DNS : A assets.cdn.example.com
+NA --> DNS : A assets.cdn.example.com
+DNS --> FRA : EU geo match
+DNS --> NYC : NA geo match
+FRA ..> NYC : fallback
+NYC ..> FRA : fallback
+
+note bottom of DNS
+  routeSelector matches:
+  edgecdnx.com/tenant=global
+  cache=ssd
+end note
+@enduml
