@@ -16,8 +16,11 @@ The EdgeCDN-X DNS controller (`edgecdnx` plugin) routes DNS queries through the 
 
 1. **Direct Node Resolution** (optional): For queries matching the pattern `nodename.location.node.service.`, return the IP address of the specified node directly.
 2. **DNSEndpoint Lookup**: Match the query name and type to a `DNSEndpoint` CRD resource.
-    - For `Simple` endpoints, return configured target addresses directly.
-    - For `Geolocation` endpoints, determine the best location using prefix routing and geolookup.
+    - `Simple`: return configured target addresses directly.
+    - `Weighted`: choose among matching locations using weight metadata.
+    - `Failover`: prefer the first configured primary location and move to healthier fallbacks when needed.
+    - `Geolocation`: determine the best location using prefix routing and geolookup.
+    - `RoundRobin`: rotate deterministically across matching locations.
 3. **Location Selection**:
     - **Prefix Routing**: Match the client's source IP (or EDNS client subnet) to a `PrefixList` CRD for direct location assignment.
     - **Geolocation Routing**: If prefix routing doesn't apply, use geolocation data to select a location based on configured geo attributes and weights.
@@ -139,34 +142,114 @@ Node groups can be configured with different cache profiles for services requiri
 
 ## DNSEndpoint Configuration
 
-`DNSEndpoint` CRDs define which domains are served and how they should be routed (Simple or Geolocation-based).
+`DNSEndpoint` CRDs define which domains are served and how requests should be routed. The plugin supports these routing policies on `spec.routingPolicy`:
 
-**Simple Endpoint** (fixed target addresses):
+| Policy | When to use it | Primary fields |
+| --- | --- | --- |
+| `Simple` | Static answers, often for origin addresses or explicit records | `targets`, `recordType`, `recordTTL` |
+| `Weighted` | Prefer some matching locations over others using weights and labels | `routeSelector`, `recordType`, `recordTTL` |
+| `Failover` | Prefer a primary location and then fall back to healthy alternatives | `targets`, `routeSelector`, `recordType`, `recordTTL` |
+| `Geolocation` | Route by prefix match or geographic metadata | `routeSelector`, `recordType`, `recordTTL` |
+| `RoundRobin` | Spread queries across multiple candidate locations in sequence | `routeSelector`, `recordType`, `recordTTL` |
+
+The plugin matches the value case-insensitively, but the canonical CRD examples use title case such as `Simple`, `Weighted`, `Failover`, `Geolocation`, and `RoundRobin`.
+
+### Simple
+
+Use `Simple` for explicit static targets. The plugin returns the `spec.targets` values directly for the requested record type.
+
 ```yaml
 apiVersion: infrastructure.edgecdnx.com/v1alpha1
 kind: DNSEndpoint
 metadata:
   name: static-origin
 spec:
-  fqdn: static.example.com
+  dnsName: static.example.com
+  routingPolicy: Simple
   recordType: A
-  targets: ["203.0.113.10"]  # Direct answers
+  targets: ["203.0.113.10", "203.0.113.11"]
   recordTTL: 300
 ```
 
-**Geolocation Endpoint** (location-aware routing):
+### Weighted
+
+Use `Weighted` when multiple matching locations should be considered and some should win more often based on their configured weight metadata.
+
 ```yaml
 apiVersion: infrastructure.edgecdnx.com/v1alpha1
 kind: DNSEndpoint
 metadata:
-  name: cdn-service
+  name: weighted-service
 spec:
-  fqdn: cdn.example.com
+  dnsName: cdn.example.com
+  routingPolicy: Weighted
   recordType: A
-  routeSelector:  # Labels to match against location definitions
-    tier: primary
   recordTTL: 60
-  dnsResponseType: A_AAAA  # or CNAME
+  routeSelector:
+    matchLabels:
+      edgecdnx.com/tenant: tbotech
+      edgecdnx.com/region: us-east
+```
+
+### Failover
+
+Use `Failover` to prefer one location first and then fail over to additional healthy alternatives. In the current implementation, the first entry in `spec.targets` is treated as a `Location` name, not a literal DNS hostname.
+
+```yaml
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: failover-service
+spec:
+  dnsName: api.example.com
+  routingPolicy: Failover
+  recordType: A
+  recordTTL: 60
+  targets:
+    - us-east
+  routeSelector:
+    matchLabels:
+      edgecdnx.com/tenant: tbotech
+```
+
+### Geolocation
+
+Use `Geolocation` to route by location labels, prefix match, or geo metadata. The plugin first checks prefix routing and then uses geolocation lookup when needed.
+
+```yaml
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: geo-service
+spec:
+  dnsName: cdn.example.com
+  routingPolicy: Geolocation
+  recordType: A
+  recordTTL: 60
+  routeSelector:
+    matchLabels:
+      edgecdnx.com/tenant: tbotech
+      edgecdnx.com/region: us-east
+```
+
+### RoundRobin
+
+Use `RoundRobin` to rotate target locations in a deterministic sequence across repeated queries to the same endpoint.
+
+```yaml
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: rr-service
+spec:
+  dnsName: app.example.com
+  routingPolicy: RoundRobin
+  recordType: A
+  recordTTL: 60
+  routeSelector:
+    matchLabels:
+      edgecdnx.com/tenant: tbotech
+      edgecdnx.com/site: edge
 ```
 
 ## Zone Configuration
