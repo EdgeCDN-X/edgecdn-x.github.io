@@ -1,0 +1,71 @@
+<mjml>
+    <mj-head>
+        <mj-attributes>
+            <mj-all font-family="Arial, Helvetica, sans-serif" />
+            <mj-text color="#353333" font-size="16px" />
+            <mj-button background-color="#3472ed" color="#ffffff" />
+        </mj-attributes>
+    </mj-head>
+
+    <mj-body background-color="#f4f6fb">
+
+        <!-- Header -->
+        <mj-section background-color="#3472ed" padding="30px">
+            <mj-column>
+                <mj-image
+                    src="https://edgecdnx.fra1.digitaloceanspaces.com/assets/public/Logo%20Transparency%20white.png"
+                    alt="Logo" width="250px" align="center" />
+            </mj-column>
+        </mj-section>
+
+        <!-- Main Content -->
+        <mj-section background-color="#ffffff" padding="30px">
+            <mj-column>
+                <mj-text font-size="18px" color="#353333" line-height="1.7">
+                    <div style="font-family: Arial, sans-serif; line-height: 1.7; color: #333;">
+                        <h2 style="color: #1E90FF; margin-top: 0; margin-bottom: 16px;">September 2026 Newsletter</h2>
+
+                        <p style="margin: 0 0 16px 0;"><strong>Hello everyone,</strong></p>
+
+                        <p style="margin: 0 0 16px 0;">
+                            It has been a while since the last update, and while there have been no public announcements for a longer period, I have been hard at work building the next generation of features for EdgeCDN-X.
+                        </p>
+
+                        <p style="margin: 0 0 16px 0;">
+                            The biggest upcoming addition is DNS functionality with GSLB capabilities. This will enable more advanced traffic steering, better global load balancing, and stronger support for modern edge delivery architectures.
+                        </p>
+
+                        <p style="margin: 0 0 16px 0;">
+                            I am also working on multi-tenancy support. Once available, it will allow you to build your own CDN using the EdgeCDN-X Portal and bring your own caching layer, opening the door to a much more flexible and customizable self-hosted deployment model.
+                        </p>
+
+                        <p style="margin: 0 0 16px 0;">
+                            These features are designed to make EdgeCDN-X more powerful, more scalable, and easier to adapt to different infrastructure needs.
+                        </p>
+
+                        <p style="margin: 0;">
+                            Thank you for your interest and support. More updates are on the way.
+                        </p>
+                    </div>
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <!-- Footer -->
+        <mj-section background-color="#353333" padding="20px">
+            <mj-column>
+                <mj-social mode="horizontal" icon-size="24px" align="center">
+                    <mj-social-element name="youtube" href="https://www.youtube.com/@edgecdnx"
+                        background-color="#01b1ff" />
+                    <mj-social-element name="x" href="https://x.com/EdgecdnX" background-color="#01b1ff" />
+                    <mj-social-element name="github" href="https://github.com/EdgeCDN-X" background-color="#01b1ff" />
+                </mj-social>
+
+                <mj-text align="center" font-size="12px" color="#ffffff">
+                    2026 TboTech s.r.o. - EdgeCDN-X<br></br>Slovakia
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+    </mj-body>
+</mjml>

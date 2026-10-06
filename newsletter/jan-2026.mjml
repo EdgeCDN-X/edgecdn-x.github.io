@@ -1,0 +1,101 @@
+<mjml>
+    <mj-head>
+        <mj-attributes>
+            <mj-all font-family="Arial, Helvetica, sans-serif" />
+            <mj-text color="#353333" font-size="16px" />
+            <mj-button background-color="#3472ed" color="#ffffff" />
+        </mj-attributes>
+    </mj-head>
+
+    <mj-body background-color="#f4f6fb">
+
+        <!-- Header -->
+        <mj-section background-color="#3472ed" padding="30px">
+            <mj-column>
+                <mj-image
+                    src="https://edgecdnx.fra1.digitaloceanspaces.com/assets/public/Logo%20Transparency%20white.png"
+                    alt="Logo" width="250px" align="center" />
+            </mj-column>
+        </mj-section>
+
+        <!-- Main Content -->
+        <mj-section background-color="#ffffff" padding="30px">
+            <mj-column>
+                <mj-text font-size="18px" color="#353333" line-height="1.6">
+
+                    <section style="font-family: Arial, sans-serif; line-height: 1.6; color: #333;">
+                        <h2 style="color: #1E90FF;">Introducing EdgeCDN-X:</h2>
+                        <h4 style="color: #1E90FF;">A Cloud-Native, Open-Source Content Delivery Platform</h4>
+                        <p>Hi! My name is Tomáš and I’m the founder of TboTech and the lead developer behind
+                            <strong>EdgeCDN-X</strong>. After years of experience in building and managing content
+                            delivery networks, I recognized the need for a more <strong>flexible</strong> and
+                            <strong>cloud-native</strong> solution that empowers teams to take control of their content
+                            delivery infrastructure.</p>
+                        <p>We’re excited to share <strong>EdgeCDN-X</strong>, a powerful open-source content delivery
+                            platform designed for <strong>speed, scalability, and flexibility</strong>. Built on top of
+                            <strong>Kubernetes</strong> and CNCF projects, EdgeCDN-X combines advanced
+                            <strong>routing</strong>, <strong>caching</strong>, and <strong>secure delivery</strong> to
+                            optimize content delivery across the globe.</p>
+
+                        <h4 style="color: #1E90FF;">Key Highlights:</h4>
+                        <ul>
+                            <li><strong>Declarative Deployment & GitOps:</strong> Roll out services seamlessly using
+                                ArgoCD and Kubernetes CRDs.</li>
+                            <li><strong>Intelligent Routing:</strong> Geo-aware DNS routing with active health checks,
+                                weighted load balancing, and dynamic reconfiguration.</li>
+                            <li><strong>High-Performance Caching:</strong> NGINX Ingress-based caching engine with easy
+                                customization.</li>
+                            <li><strong>Secure URLs & S3 Integration:</strong> Protect content with signed URLs and
+                                integrate with private or public S3 buckets.</li>
+                        </ul>
+                        <p>EdgeCDN-X is perfect for teams looking for a <strong>flexible, cloud-native CDN</strong>
+                            solution that scales efficiently while maintaining control over content delivery.</p>
+                        <p>I'm attaching a few videos to see the state of the Art of the Project.</p>
+                    </section>
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+
+        <!-- Video Links -->
+        <mj-section background-color="#ffffff" padding="20px">
+            <mj-column width="100%">
+                <mj-image
+                    src="https://edgecdnx.fra1.digitaloceanspaces.com/assets/public/Blue%20Stunning%20Simple%20Informative%20Vlog%20Video%20YouTube%20Thumbnail.png"
+                    alt="EdgeCDN-X Introduction Video" href="https://www.youtube.com/watch?v=AidcdVXuzLY" />
+                <mj-text align="center" color="#3472ed">
+                    <a href="https://www.youtube.com/watch?v=AidcdVXuzLY" style="color:#3472ed;text-decoration:none;">
+                        EdgeCDN-X Introduction Video
+                    </a>
+                </mj-text>
+            </mj-column>
+
+            <mj-column width="100%">
+                <mj-text>
+                    Eager to find out more? Feel free to contact us or follow us on one of the socials found in the footer.
+                </mj-text>
+                <mj-button href="https://n8n.tbotech.sk/form/5e66f7f3-f59e-4973-aa75-26a343a9b0ba" background-color="#3472ed" color="white" border-radius="5px" padding="15px 30px">
+                    Contact Me
+                </mj-button>
+            </mj-column>
+
+
+        </mj-section>
+
+        <!-- Footer -->
+        <mj-section background-color="#353333" padding="20px">
+            <mj-column>
+                <mj-social mode="horizontal" icon-size="24px" align="center">
+                    <mj-social-element name="youtube" href="https://www.youtube.com/@edgecdnx" background-color="#01b1ff" />
+                    <mj-social-element name="x" href="https://x.com/EdgecdnX" background-color="#01b1ff" />
+                    <mj-social-element name="github" href="https://github.com/EdgeCDN-X" background-color="#01b1ff" />
+                </mj-social>
+
+                <mj-text align="center" font-size="12px" color="#ffffff">
+                    2026 TboTech s.r.o. - EdgeCDN-X<br></br>Slovakia
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+    </mj-body>
+</mjml>
