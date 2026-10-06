@@ -35,7 +35,7 @@ NYC ..> FRA : fallback
 
 note bottom of DNS
   routeSelector matches:
-  edgecdnx.com/tenant=global
+  project=global
   cache=ssd
 end note
 @enduml

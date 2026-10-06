@@ -187,7 +187,7 @@ spec:
   recordTTL: 60
   routeSelector:
     matchLabels:
-      edgecdnx.com/tenant: tbotech
+      project: tbotech
       edgecdnx.com/region: us-east
 ```
 
@@ -209,7 +209,7 @@ spec:
     - us-east
   routeSelector:
     matchLabels:
-      edgecdnx.com/tenant: tbotech
+      project: tbotech
 ```
 
 ### Geolocation
@@ -228,7 +228,7 @@ spec:
   recordTTL: 60
   routeSelector:
     matchLabels:
-      edgecdnx.com/tenant: tbotech
+      project: tbotech
       edgecdnx.com/region: us-east
 ```
 
@@ -248,7 +248,7 @@ spec:
   recordTTL: 60
   routeSelector:
     matchLabels:
-      edgecdnx.com/tenant: tbotech
+      project: tbotech
       edgecdnx.com/site: edge
 ```
 

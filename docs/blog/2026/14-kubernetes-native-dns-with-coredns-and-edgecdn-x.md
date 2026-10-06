@@ -89,7 +89,7 @@ metadata:
   name: fra1-c1
   namespace: edgecdnx
   labels:
-    edgecdnx.com/tenant: global
+    project: global
 spec:
   fallbackLocations:
     - nyc1-c1
@@ -117,7 +117,7 @@ metadata:
   name: nyc1-c1
   namespace: edgecdnx
   labels:
-    edgecdnx.com/tenant: global
+    project: global
 spec:
   fallbackLocations:
     - fra1-c1
@@ -140,7 +140,7 @@ spec:
           ipv4: 203.0.113.30
 ```
 
-Finally, define the DNS entry. EdgeCDN-X evaluates the selector against the location labels merged with each node group's labels. Both locations above therefore match both selector terms: `edgecdnx.com/tenant: global` from `metadata.labels` and `cache: ssd` from `spec.nodeGroups[].labels`.
+Finally, define the DNS entry. EdgeCDN-X evaluates the selector against the location labels merged with each node group's labels. Both locations above therefore match both selector terms: `project: global` from `metadata.labels` and `cache: ssd` from `spec.nodeGroups[].labels`.
 
 ```yaml
 apiVersion: infrastructure.edgecdnx.com/v1alpha1
@@ -155,7 +155,7 @@ spec:
   recordTTL: 60
   routeSelector:
     matchLabels:
-      edgecdnx.com/tenant: global
+      project: global
       cache: ssd
 ```
 
