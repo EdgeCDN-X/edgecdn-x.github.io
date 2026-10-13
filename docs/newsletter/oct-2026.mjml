@@ -1,0 +1,107 @@
+<mjml>
+    <mj-head>
+        <mj-title>EdgeCDN-X Newsletter - October 2026</mj-title>
+        <mj-preview>Explore healthcheck history and watch DNS-based request routing in EdgeCDN-X.</mj-preview>
+        <mj-attributes>
+            <mj-all font-family="Arial, Helvetica, sans-serif" />
+            <mj-text color="#353333" font-size="16px" line-height="1.6" />
+            <mj-button background-color="#3472ed" color="#ffffff" border-radius="5px" />
+        </mj-attributes>
+    </mj-head>
+
+    <mj-body background-color="#f4f6fb">
+        <mj-section background-color="#3472ed" padding="10px">
+            <mj-column>
+                <mj-image
+                    src="https://edgecdnx.fra1.digitaloceanspaces.com/assets/public/Logo%20Transparency%20white.png"
+                    alt="EdgeCDN-X" width="250px" align="center" />
+            </mj-column>
+        </mj-section>
+
+        <mj-section background-color="#ffffff" padding="10px">
+            <mj-column>
+                <mj-text>
+                    <h2 style="color: #1E90FF; margin-top: 0;">October 2026 Newsletter</h2>
+                    <p><b>Hello everyone,</b></p>
+                    <p>
+                        This month, take a closer look at healthcheck history in the EdgeCDN-X location view,
+                        and watch DNS-based request routing in action.
+                    </p>
+                    <p>
+                        EdgeCDN-X provides DNS-based global server load balancing to direct requests to suitable
+                        edge locations. Choose from static answers, weighted distribution, primary-and-fallback
+                        failover, geolocation and IP-prefix routing, or round-robin selection. Health checks,
+                        maintenance state, and active alerts help determine which nodes are eligible, while
+                        Kubernetes resources keep routing configuration declarative.
+                    </p>
+                </mj-text>
+
+                <mj-text>
+                    <h4 style="color: #1E90FF;">From OTLP Logs to Healthcheck History</h4>
+                    <p>
+                        Learn how probe results travel through OTLP logs, Fluent Bit, NATS, Benthos, and
+                        TimescaleDB to power recent per-node healthcheck history. The location view helps
+                        operators inspect pass/fail results, probe durations, and failure messages.
+                    </p>
+                </mj-text>
+                <mj-button
+                    href="https://edgecdnx.com/blog/from-otlp-logs-to-healthcheck-history-in-edge-cdn-x@TrackLink"
+                    target="_blank"
+                    padding="10px 0 24px">
+                    Read the blog post
+                </mj-button>
+
+                <mj-text>
+                    <h4 style="color: #1E90FF;">DNS-Based Request Routing</h4>
+                    <p>
+                        Watch the video about DNS-based request routing with EdgeCDN-X.
+                    </p>
+                </mj-text>
+                <mj-image
+                    src="https://img.youtube.com/vi/eTIqW8aCeQY/hqdefault.jpg"
+                    alt="DNS based request routing with EdgeCDN-X"
+                    href="https://www.youtube.com/watch?v=eTIqW8aCeQY@TrackLink"
+                    target="_blank"
+                    width="400px" />
+                <mj-text align="center" color="#3472ed">
+                    <a href="https://www.youtube.com/watch?v=eTIqW8aCeQY@TrackLink"
+                        target="_blank" rel="noopener noreferrer"
+                        style="color:#3472ed;text-decoration:none;">
+                        DNS based request routing with EdgeCDN-X
+                    </a>
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <mj-section background-color="#353333" padding="20px">
+            <mj-column>
+                <mj-social mode="horizontal" icon-size="24px" align="center">
+                    <mj-social-element name="youtube" href="https://www.youtube.com/@edgecdnx@TrackLink"
+                        background-color="#01b1ff" />
+                    <mj-social-element name="x" href="https://x.com/EdgecdnX@TrackLink" background-color="#01b1ff" />
+                    <mj-social-element name="github" href="https://github.com/EdgeCDN-X@TrackLink"
+                        background-color="#01b1ff" />
+                </mj-social>
+
+                <mj-text align="center" font-size="12px" color="#ffffff">
+                    2026 TboTech s.r.o. - EdgeCDN-X<br></br>Slovakia
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <mj-section background-color="#ffffff">
+            <mj-column>
+                <mj-raw>
+                    <div class="footer" style="text-align: center;font-size: 12px;color: #888;">
+                        <p>
+                            <a href="{{ UnsubscribeURL }}" style="color: #888;">Unsubscribe</a>
+                            &nbsp;&nbsp;
+                            <a href="{{ MessageURL }}" style="color: #888;">View in browser</a>
+                        </p>
+                    </div>
+                    <div class="gutter" style="padding: 30px;">&nbsp;{{ TrackView }}</div>
+                </mj-raw>
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>
