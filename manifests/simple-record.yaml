@@ -1,0 +1,17 @@
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: simple.edgecdnx.com-a
+  namespace: edgecdnx
+spec:
+  project:
+    name: edgecdnx
+  zone:
+    name: edgecdnx.com
+  dnsName: simple.edgecdnx.com
+  recordTTL: 300
+  recordType: A
+  routingPolicy: Simple
+  targets:
+  - 192.168.80.2
+  - 192.168.80.3

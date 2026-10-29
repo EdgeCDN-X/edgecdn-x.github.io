@@ -1,0 +1,18 @@
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: weighted.edgecdnx.com-a
+  namespace: edgecdnx
+spec:
+  project:
+    name: edgecdnx
+  zone:
+    name: edgecdnx.com
+  dnsName: weighted.edgecdnx.com
+  recordTTL: 60
+  recordType: A
+  routingPolicy: Weighted
+  routeSelector:
+    matchLabels:
+      region: eu
+      tier: edge

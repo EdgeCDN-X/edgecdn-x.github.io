@@ -1,0 +1,19 @@
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: failover.edgecdnx.com-a
+  namespace: edgecdnx
+spec:
+  project:
+    name: edgecdnx
+  zone:
+    name: edgecdnx.com
+  dnsName: failover.edgecdnx.com
+  recordTTL: 60
+  recordType: A
+  routingPolicy: Failover
+  targets:
+    - fra1-c1
+  routeSelector:
+    matchLabels:
+      cache: ssd

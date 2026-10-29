@@ -1,0 +1,10 @@
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: Zone
+metadata:
+  name: edgecdnx.com
+  namespace: edgecdnx
+spec:
+  project:
+    name: edgecdnx
+  email: noc.edgecdnx.com.
+  zone: edgecdnx.com
