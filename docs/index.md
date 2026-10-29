@@ -25,7 +25,7 @@ DNS is based on CoreDNS with a custom plugin which build on top of Kubernets CRD
 * **Secure-Urls** component ensures that unatuhenticated access is restricted and supports common streaming formats such as MPEG-DASH or HLS with Prefix based URL signatrues.
 
 # License
-Base components are Licensed with an Apache2 license, and are free to use for commercial purposes. The base components include:
+Base components are Licensed with an AGPLv3 license, and are free to use for commercial purposes. The base components include:
 
 * EdgeCDN-X Controller
 * CoreDNS
@@ -36,3 +36,5 @@ The base license allow integrators to build a DNS solution with Caching capabili
 ### Commercial add-ons
 Additional components are available to build a fully e2e Control plane for Enterprise purposes. Enterprise featurse include API endpoint, User Interface, cert-manager and ACME support. For the full commercial platform perpertual licenses and subscription based licenses are available. 
 The official public offering hosted at [portal.edgecdnx.com](https://portal.degecdnx.com) is running the full commercial stack with a free plan for both home and commercial use.
+
+If you would like to deploy EdgeCDN-X DNS on your premises as a branded solution as a PaaS offering, feel free to [reach out](contact.md).

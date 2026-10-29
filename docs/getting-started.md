@@ -5,7 +5,7 @@ CDN and DNS is a distributed compute problem and these docs won't specify exact 
 EdgeCDN-X is divided onto two main parts. DNS and Caching, these components can work indidivually, and at the same time the integrator if wishes can replace one or the other with their own component. DNS is build in a way, that it can be compatible with any caching engine, so other engines, such as Varnish, Envoy, or other components can be well integrated with the ecosystem.
 
 ## Architecture Overview
-The image below represents a full deployment diagram including all the core components and commecial components for production deployment. The highlighted components are Open Source Apache2 licensed components.
+The image below represents a full deployment diagram including all the core components and commecial components for production deployment. The highlighted components are Open Source AGPLv3 licensed components.
 
 ![Deployment Diagram](assets/DeploymentDiagram.png)
 

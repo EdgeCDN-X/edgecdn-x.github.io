@@ -26,6 +26,6 @@ nav:
     - "Defining Projects": user-guide/defining-projects.md
     - "Defining Zones and Records": user-guide/defining-zones-and-records.md
     - "Defining Locations": user-guide/defining-locations.md
-
+    - "Defining Health Checks": user-guide/defining-healthchecks.md
   - "Tags": tags.md
   - "Contact": contact.md

@@ -1,0 +1,25 @@
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: HealthCheckProfile
+metadata:
+  name: cache-probes
+  namespace: edgecdnx
+spec:
+  project:
+    name: edgecdnx
+  probes:
+    - name: cache-http
+      type: HTTP
+      interval: 10s
+      timeout: 3s
+      http:
+        protocol: http
+        port: 8080
+        path: /health
+        stack: IPv4
+    - name: cache-tcp
+      type: TCP
+      interval: 10s
+      timeout: 3s
+      tcp:
+        port: 8080
+        stack: IPv4

@@ -26,6 +26,8 @@ spec:
       flavor: ""
       labels:
         cache: ssd
+      healthCheck:
+        name: cache-probes
       nodes:
         - name: n1
           ipv4: 192.168.80.10

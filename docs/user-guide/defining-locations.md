@@ -373,3 +373,6 @@ The diagram below illustrates the `Weighted` example: only `fra1-c1` and `ams1-c
 
 ![Route selector matching region eu and tier edge, with two matching locations and three excluded locations](../assets/RouteSelectorsDiagram.png)
 
+
+## Healthchecks
+Continue on the [defining healthchecks](defining-healthchecks.md) page to add active healthchecks to the individual node groups.
