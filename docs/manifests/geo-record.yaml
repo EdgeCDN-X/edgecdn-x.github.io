@@ -1,0 +1,18 @@
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: DNSEndpoint
+metadata:
+  name: geo.edgecdnx.com-a
+  namespace: edgecdnx
+spec:
+  project:
+    name: edgecdnx
+  zone:
+    name: edgecdnx.com
+  dnsName: geo.edgecdnx.com
+  recordTTL: 60
+  recordType: A
+  routingPolicy: Geolocation
+  routeSelector:
+    matchLabels:
+      region: eu
+      cache: ssd

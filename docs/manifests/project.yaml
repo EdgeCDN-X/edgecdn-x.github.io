@@ -1,0 +1,16 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: edgecdnx
+---
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: Project
+metadata:
+  name: edgecdnx
+  namespace: edgecdnx
+spec:
+  description: Project Space for EdgeCDN-X
+  name: EdgeCDN-X
+  rbac:
+    groups: []
+    rules: []

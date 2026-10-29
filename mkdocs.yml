@@ -20,23 +20,12 @@ markdown_extensions:
       alternate_style: true
 nav:
   - "Overview": index.md
-  - "Architecture": architecture.md
-  - "CRDs": crds.md
-  - "Deployment":
-      - "Control Plane": 
-          - "ArgoCD": argocd.md
-          - "Registering Locations": locations.md
-          - "Core Components": core-components.md
-          - "EdgeCDN-X Controller": edgecdnx-controller.md
-      - "Routing":
-          - "CoreDNS": coredns.md
-          - "CoreDNS Deployment": coredns-deployment.md
-          - "EdgeCDN-X Controller - Routing": edgecdnx-controller-router.md
-      - "Caching":
-          - "Prerequisites": cache-prerequisites.md
-          - "Ingress NGINX": ingress-nginx.md
-          - "EdgeCDN-X Controller - Caching": edgecdnx-controller-cache.md
-          - "Secure Urls": secure-urls.md
-          - "S3 Gateway": s3-gateway.md
+  - "Getting Started": getting-started.md
+  - "Standalone DNS Deployment": standalone-dns-deployment.md
+  - "User Guide":
+    - "Defining Projects": user-guide/defining-projects.md
+    - "Defining Zones and Records": user-guide/defining-zones-and-records.md
+    - "Defining Locations": user-guide/defining-locations.md
+    - "Defining Health Checks": user-guide/defining-healthchecks.md
   - "Tags": tags.md
   - "Contact": contact.md
