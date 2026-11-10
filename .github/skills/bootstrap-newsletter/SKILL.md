@@ -63,6 +63,15 @@ Organize MJML sections into a logical flow:
 
 Create the MJML structure with proper syntax:
 
+**External Link Tracking (Required)**:
+- Always append the literal `@TrackLink` suffix exactly once to every external HTTP(S) navigation URL in `href` attributes, including inline links, buttons, linked images, social links, and raw footer HTML. This includes links to EdgeCDN-X websites, the portal, and documentation.
+- Place `@TrackLink` at the very end of the complete URL, after any query string or fragment. Preserve URLs that already end with it.
+- Do not append it to image or other asset `src` URLs, `mailto:` or `tel:` links, internal anchors, or listmonk template values such as `{{ UnsubscribeURL }}` and `{{ MessageURL }}`.
+- Keep the suffix in generated HTML as well as MJML. Check the final external `href` URLs after compilation, including any social URLs rewritten by MJML.
+- When checking that a destination resolves, remove the tracking suffix for the check only; retain it in the newsletter.
+
+Example: `href="https://edgecdnx.com/pricing@TrackLink"`.
+
 **Template Framework**:
 ```mjml
 <mjml>
@@ -96,7 +105,7 @@ Create the MJML structure with proper syntax:
     <!-- Call-to-Action -->
     <mj-section>
       <mj-column>
-        <mj-button href="[link]">Read Full Article</mj-button>
+        <mj-button href="[link]@TrackLink">Read Full Article</mj-button>
       </mj-column>
     </mj-section>
     
@@ -114,7 +123,7 @@ For each selected post, convert to MJML:
 - **Title** → `<mj-text font-weight="bold" font-size="18px">{Post Title}</mj-text>`
 - **Date** → `<mj-text font-size="12px" color="#999">{Date}</mj-text>`
 - **Summary** → `<mj-text font-size="14px">{Post summary or excerpt}</mj-text>`
-- **Link** → `<mj-button href="{post-url}">Read More</mj-button>`
+- **Link** → `<mj-button href="{post-url}@TrackLink">Read More</mj-button>` (append the suffix only if absent)
 - **Image** (if available) → `<mj-image src="{image-url}" alt="{alt-text}"></mj-image>`
 
 **Section Template** (per post):
@@ -124,7 +133,7 @@ For each selected post, convert to MJML:
     <mj-text font-weight="bold" font-size="18px">{Post Title}</mj-text>
     <mj-text font-size="12px" color="#999">{Post Date}</mj-text>
     <mj-text font-size="14px" line-height="1.6">{Post excerpt or summary}</mj-text>
-    <mj-button href="{post-url}">Read Full Post</mj-button>
+    <mj-button href="{post-url}@TrackLink">Read Full Post</mj-button>
   </mj-column>
 </mj-section>
 ```
@@ -172,6 +181,7 @@ Before finalizing:
 - [ ] MJML structure is valid (matching opening/closing tags)
 - [ ] All `<mj-*>` elements use correct attributes
 - [ ] Links are properly formatted and point to current URLs
+- [ ] Every external HTTP(S) navigation `href` ends with exactly one `@TrackLink`; asset URLs and listmonk template values remain unchanged
 - [ ] Footer is included and properly embedded
 - [ ] No broken image URLs
 - [ ] Preview text is concise (50-100 characters)
@@ -194,6 +204,7 @@ Before finalizing:
    - Verify HTML renders correctly in test email clients
    - Check mobile responsiveness
    - Validate footer is present at bottom
+   - Verify every external HTTP(S) navigation `href` still ends with exactly one `@TrackLink`, including rewritten social links
 
 4. **Store HTML**:
    - Save as `{month-short}-{year}.html` in same folder as MJML
@@ -229,6 +240,7 @@ After creating MJML:
 - MJML syntax is valid (no malformed tags or attributes)
 - All content is sourced from posts or docs (no invented content)
 - Links are current and point to accessible resources
+- All external HTTP(S) navigation links end with exactly one `@TrackLink` in MJML and any generated HTML
 - Footer is included and properly embedded
 - Preview text is compelling and under 100 characters
 - Post summaries are accurate excerpts (not paraphrased incorrectly)
