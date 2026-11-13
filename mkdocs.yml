@@ -27,6 +27,7 @@ nav:
     - "Defining Zones and Records": user-guide/defining-zones-and-records.md
     - "Defining Locations": user-guide/defining-locations.md
     - "Defining Health Checks": user-guide/defining-healthchecks.md
+    - "Configuring ExternalDNS": user-guide/configuring-external-dns.md
   - "Tags": tags.md
   - "Contact": contact.md
   - "Privacy Policy": privacy-policy.md
