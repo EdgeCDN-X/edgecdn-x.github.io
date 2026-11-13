@@ -1,0 +1,77 @@
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: Location
+metadata:
+  name: fra1-c1
+  namespace: edgecdnx
+  labels:
+    region: eu
+    tier: edge
+spec:
+  project:
+    name: edgecdnx
+  weight: 3
+  fallbackLocations:
+    - ams1-c1
+  geoLookup:
+    weight: 50
+    attributes:
+      geoip/continent/code:
+        weight: 1000
+        values:
+          - value: EU
+      default:
+        weight: 1
+  nodeGroups:
+    - name: ssd
+      flavor: ""
+      labels:
+        cache: ssd
+      healthCheck:
+        name: cache-probes
+      nodes:
+        - name: n1
+          ipv4: 192.168.80.10
+        - name: n2
+          ipv4: 192.168.80.11
+    - name: hdd
+      flavor: ""
+      labels:
+        cache: hdd
+      nodes:
+        - name: n3
+          ipv4: 192.168.80.12
+---
+apiVersion: infrastructure.edgecdnx.com/v1alpha1
+kind: Location
+metadata:
+  name: ams1-c1
+  namespace: edgecdnx
+  labels:
+    region: eu
+    tier: edge
+spec:
+  project:
+    name: edgecdnx
+  weight: 1
+  fallbackLocations:
+    - fra1-c1
+  geoLookup:
+    weight: 50
+    attributes:
+      geoip/continent/code:
+        weight: 1000
+        values:
+          - value: EU
+      geoip/country/code:
+        weight: 100
+        values:
+          - value: NL
+          - value: BE
+  nodeGroups:
+    - name: ssd
+      flavor: ""
+      labels:
+        cache: ssd
+      nodes:
+        - name: n1
+          ipv4: 192.168.80.20

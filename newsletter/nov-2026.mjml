@@ -1,0 +1,119 @@
+<mjml>
+    <mj-head>
+        <mj-title>EdgeCDN-X Newsletter - November 2026</mj-title>
+        <mj-preview>EdgeCDN-X DNS is live at portal.edgecdnx.com, with a free plan to try.</mj-preview>
+        <mj-attributes>
+            <mj-all font-family="Arial, Helvetica, sans-serif" />
+            <mj-text color="#353333" font-size="16px" line-height="1.6" />
+            <mj-button background-color="#3472ed" color="#ffffff" border-radius="5px" />
+        </mj-attributes>
+    </mj-head>
+
+    <mj-body background-color="#f4f6fb">
+        <mj-section background-color="#3472ed" padding="10px">
+            <mj-column>
+                <mj-image
+                    src="https://edgecdnx.fra1.digitaloceanspaces.com/assets/public/Logo%20Transparency%20white.png"
+                    alt="EdgeCDN-X" width="250px" align="center" />
+            </mj-column>
+        </mj-section>
+
+        <mj-section background-color="#ffffff" padding="10px">
+            <mj-column>
+                <mj-text>
+                    <h2 style="color: #1E90FF; margin-top: 0;">November 2026 Newsletter</h2>
+                    <p><b>Hello everyone,</b></p>
+                    <p>
+                        EdgeCDN-X DNS has moved into production. You can now try the hosted service at
+                        <a href="https://portal.edgecdnx.com/@TrackLink">portal.edgecdnx.com</a>, with a free plan
+                        available to get started.
+                    </p>
+                    <p>
+                        EdgeCDN-X helps teams manage DNS and routing in a Kubernetes-native platform.
+                        Configure straightforward DNS answers or use policies such as weighted routing,
+                        failover, geolocation, and round-robin. Health checks and location state help
+                        determine which nodes are eligible to receive traffic.
+                    </p>
+                </mj-text>
+
+                <mj-text>
+                    <h4 style="color: #1E90FF;">EdgeCDN-X DNS is now in production</h4>
+                    <p>
+                        The production portal provides access to the hosted EdgeCDN-X DNS service, without
+                        requiring you to deploy the platform yourself. Start with the free Starter tier
+                        and explore the service before choosing a paid plan.
+                    </p>
+                </mj-text>
+                <mj-button
+                    href="https://portal.edgecdnx.com/@TrackLink"
+                    target="_blank"
+                    padding="10px 0 24px">
+                    Try the free plan
+                </mj-button>
+
+                <mj-text>
+                    <h4 style="color: #1E90FF;">Simple options as your needs grow</h4>
+                    <p>
+                        The pricing page lists Starter at €0 per month, Business at €6 per month, and
+                        Enterprise at €30 per month. Starter is described as including all advanced
+                        features; Business is a higher usage tier, while Enterprise is suited to hosting
+                        and platform-as-a-service (PaaS) solutions. You can switch the displayed currency
+                        between euros and US dollars on the pricing page.
+                    </p>
+                </mj-text>
+                <mj-button
+                    href="https://edgecdnx.com/pricing@TrackLink"
+                    target="_blank"
+                    padding="10px 0 24px">
+                    View plans and pricing
+                </mj-button>
+
+                <mj-text>
+                    <h4 style="color: #1E90FF;">Explore DNS routing</h4>
+                    <p>
+                        See how EdgeCDN-X uses DNS routing policies to direct requests to suitable edge
+                        locations, or read the documentation to learn about running the open-source
+                        components yourself.
+                    </p>
+                </mj-text>
+                <mj-button
+                    href="https://edgecdn-x.github.io/@TrackLink"
+                    target="_blank"
+                    padding="10px 0 24px">
+                    Read the documentation
+                </mj-button>
+            </mj-column>
+        </mj-section>
+
+        <mj-section background-color="#353333" padding="20px">
+            <mj-column>
+                <mj-social mode="horizontal" icon-size="24px" align="center">
+                    <mj-social-element name="youtube" href="https://www.youtube.com/@edgecdnx@TrackLink"
+                        background-color="#01b1ff" />
+                    <mj-social-element name="x" href="https://x.com/EdgecdnX@TrackLink" background-color="#01b1ff" />
+                    <mj-social-element name="github" href="https://github.com/EdgeCDN-X@TrackLink"
+                        background-color="#01b1ff" />
+                </mj-social>
+
+                <mj-text align="center" font-size="12px" color="#ffffff">
+                    2026 TboTech s.r.o. - EdgeCDN-X<br></br>Slovakia
+                </mj-text>
+            </mj-column>
+        </mj-section>
+
+        <mj-section background-color="#ffffff">
+            <mj-column>
+                <mj-raw>
+                    <div class="footer" style="text-align: center;font-size: 12px;color: #888;">
+                        <p>
+                            <a href="{{ UnsubscribeURL }}" style="color: #888;">Unsubscribe</a>
+                            &#160;&#160;
+                            <a href="{{ MessageURL }}" style="color: #888;">View in browser</a>
+                        </p>
+                    </div>
+                    <div class="gutter" style="padding: 30px;">&#160;{{ TrackView }}</div>
+                </mj-raw>
+            </mj-column>
+        </mj-section>
+    </mj-body>
+</mjml>
